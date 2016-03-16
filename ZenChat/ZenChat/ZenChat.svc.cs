@@ -1,12 +1,18 @@
 ﻿// Copyright (c) 2016 Pascal Honegger
 // All rights reserved.
 using System;
+using System.ServiceModel;
 using ZenChat.ServiceClasses;
 
 namespace ZenChat
 {
 	public class ZenChat : IZenChat
 	{
+		public ZenChat()
+		{
+			throw new NotImplementedException();
+		}
+
 		public User GetUser(string userId)
 		{
 			throw new NotImplementedException();

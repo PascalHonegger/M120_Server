@@ -7,7 +7,11 @@ namespace ZenChat.ServiceClasses
 	/// <summary>
 	///     Interface für den allgemeinen ZenChat
 	/// </summary>
-	[ServiceContract]
+	[ServiceContract(
+		Name = "ZenChat",
+		ConfigurationName = "ZenChat",
+		Namespace = "http://zenchatservice.azurewebsites.net/ZenChat.svc",
+		SessionMode = SessionMode.NotAllowed)]
 	public interface IZenChat
 	{
 		#region user
