@@ -19,10 +19,10 @@ namespace ZenChat.ServiceClasses
 		/// <summary>
 		///    Ladet den User anhand seiner ID
 		/// </summary>
-		/// <param name="phoenNumber">Die Nummer des zu ladenden Users</param>
+		/// <param name="phoneNumber">Die Nummer des zu ladenden Users</param>
 		/// <returns>Der geladene User, falls dieser existiert</returns>
 		[OperationContract]
-		User GetUser(string phoenNumber);
+		User GetUser(string phoneNumber);
 
 		/// <summary>
 		///     Meldet einen User an. Gibt den nun angemeldeten User zurück. 
