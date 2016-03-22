@@ -8,8 +8,7 @@ namespace ZenChat.ServiceClasses
 	[DataContract]
 	public class User
 	{
-		[DataMember]
-		public string Id { get; }
+		private string Id { get; }
 
 		[DataMember]
 		public string Name { get; set; }
@@ -17,7 +16,6 @@ namespace ZenChat.ServiceClasses
 		[DataMember]
 		public string PhoneNumber { get; set; }
 
-		[DataMember]
 		public IEnumerable<User> Friends { get; set; } 
 
 		public User(string id)
@@ -35,6 +33,44 @@ namespace ZenChat.ServiceClasses
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
 			return obj.GetType() == GetType() && Equals((User) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return Id?.GetHashCode() ?? 0;
+		}
+	}
+
+	[DataContract]
+	public class PrivateUser
+	{
+		[DataMember]
+		public string Id { get; }
+
+		[DataMember]
+		public string Name { get; set; }
+
+		[DataMember]
+		public string PhoneNumber { get; set; }
+
+		[DataMember]
+		public IEnumerable<User> Friends { get; set; }
+
+		public PrivateUser(string id)
+		{
+			Id = id;
+		}
+
+		private bool Equals(PrivateUser other)
+		{
+			return string.Equals(Id, other.Id);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			return obj.GetType() == GetType() && Equals((PrivateUser)obj);
 		}
 
 		public override int GetHashCode()

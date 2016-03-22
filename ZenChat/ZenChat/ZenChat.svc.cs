@@ -6,24 +6,27 @@ using ZenChat.ServiceClasses;
 
 namespace ZenChat
 {
+	/// <summary>
+	///    Die Implementation des <see cref="IZenChat"/>
+	/// </summary>
 	public class ZenChat : IZenChat
 	{
-		public ZenChat()
+		public User GetUser(string phoenNumber)
 		{
 			throw new NotImplementedException();
 		}
 
-		public User GetUser(string userId)
+		public PrivateUser Login(string name, string phone)
 		{
 			throw new NotImplementedException();
 		}
 
-		public User Login(string mail, string name)
+		public ChatRoomBase GetAllChatRooms(string userId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public ChatRoomBase GetChatRoom(string userId, string chatRoomId)
+		public ChatRoomBase GetChatRoom(string chatRoomId)
 		{
 			throw new NotImplementedException();
 		}
@@ -43,12 +46,12 @@ namespace ZenChat
 			throw new NotImplementedException();
 		}
 
-		public ChatRoomBase ReadChatMessage(string userId, string chatRoomId, string messageId)
+		public ChatRoomBase ReadChatMessage(string userId, string messageId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public ChatRoomBase RecieveChatMessage(string userId, string chatRoomId, string messageId)
+		public ChatRoomBase RecieveChatMessage(string userId, string messageId)
 		{
 			throw new NotImplementedException();
 		}
