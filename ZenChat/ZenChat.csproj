@@ -82,9 +82,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServiceClasses\ChatMessage.cs" />
-    <Compile Include="ServiceClasses\GroupChatRoom.cs" />
-    <Compile Include="ServiceClasses\PrivateChatRoom.cs" />
-    <Compile Include="ServiceClasses\ChatRoomBase.cs" />
+    <Compile Include="ServiceClasses\ChatRoom.cs" />
+    <Compile Include="ServiceClasses\PrivateConversation.cs" />
+    <Compile Include="ServiceClasses\IConversation.cs" />
     <Compile Include="ServiceClasses\User.cs" />
     <Compile Include="ZenChat.svc.cs">
       <DependentUpon>ZenChat.svc</DependentUpon>

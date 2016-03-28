@@ -1,5 +1,7 @@
 // Copyright (c) 2016 Pascal Honegger
 // All rights reserved.
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
@@ -8,7 +10,16 @@ namespace ZenChat.ServiceClasses
 	[DataContract]
 	public class User
 	{
-		private string Id { get; }
+		/// <summary>
+		///     Setzt die <see cref="Id" /> des Users
+		/// </summary>
+		/// <param name="id"></param>
+		public User(int id)
+		{
+			Id = id;
+		}
+
+		private int Id { get; }
 
 		[DataMember]
 		public string Name { get; set; }
@@ -16,16 +27,17 @@ namespace ZenChat.ServiceClasses
 		[DataMember]
 		public string PhoneNumber { get; set; }
 
-		public IEnumerable<User> Friends { get; set; } 
-
-		public User(string id)
+		/// <summary>
+		///     Alle Freunde des Users
+		/// </summary>
+		public IEnumerable<User> Friends
 		{
-			Id = id;
+			get { throw new NotImplementedException(); }
 		}
 
 		private bool Equals(User other)
 		{
-			return string.Equals(Id, other.Id);
+			return Equals(Id, other.Id);
 		}
 
 		public override bool Equals(object obj)
@@ -37,45 +49,7 @@ namespace ZenChat.ServiceClasses
 
 		public override int GetHashCode()
 		{
-			return Id?.GetHashCode() ?? 0;
-		}
-	}
-
-	[DataContract]
-	public class PrivateUser
-	{
-		[DataMember]
-		public string Id { get; }
-
-		[DataMember]
-		public string Name { get; set; }
-
-		[DataMember]
-		public string PhoneNumber { get; set; }
-
-		[DataMember]
-		public IEnumerable<User> Friends { get; set; }
-
-		public PrivateUser(string id)
-		{
-			Id = id;
-		}
-
-		private bool Equals(PrivateUser other)
-		{
-			return string.Equals(Id, other.Id);
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			return obj.GetType() == GetType() && Equals((PrivateUser)obj);
-		}
-
-		public override int GetHashCode()
-		{
-			return Id?.GetHashCode() ?? 0;
+			return Id.GetHashCode();
 		}
 	}
 }

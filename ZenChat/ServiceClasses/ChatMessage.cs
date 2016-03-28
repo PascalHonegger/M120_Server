@@ -1,5 +1,6 @@
 // Copyright (c) 2016 Pascal Honegger
 // All rights reserved.
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -10,7 +11,7 @@ namespace ZenChat.ServiceClasses
 	public class ChatMessage
 	{
 		[DataMember]
-		public string Id{ get; }
+		public int Id { get; }
 
 		[DataMember]
 		public User Author { get; set; }
@@ -19,7 +20,7 @@ namespace ZenChat.ServiceClasses
 		public string Message { get; set; }
 
 		[DataMember]
-		public DateTime SendDate { get; set; }
+		public DateTime Created { get; set; }
 
 		[DataMember]
 		public IEnumerable<User> ArrivedAt { get; set; }
@@ -29,19 +30,19 @@ namespace ZenChat.ServiceClasses
 
 		private bool Equals(ChatMessage other)
 		{
-			return string.Equals(Id, other.Id);
+			return Equals(Id, other.Id);
 		}
 
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			return obj.GetType() == GetType() && Equals((ChatMessage)obj);
+			return obj.GetType() == GetType() && Equals((ChatMessage) obj);
 		}
 
 		public override int GetHashCode()
 		{
-			return Id?.GetHashCode() ?? 0;
+			return Id.GetHashCode();
 		}
 	}
 }
