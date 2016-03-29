@@ -19,7 +19,7 @@ namespace ZenChat.ServiceClasses
 			Id = id;
 		}
 
-		private int Id { get; }
+		public int Id { get; }
 
 		[DataMember]
 		public string Name { get; set; }

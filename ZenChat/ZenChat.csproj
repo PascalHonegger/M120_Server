@@ -76,6 +76,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\LoginFailedException.cs" />
+    <Compile Include="Exceptions\UserNotFoundException.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -84,7 +86,6 @@
     <Compile Include="ServiceClasses\ChatMessage.cs" />
     <Compile Include="ServiceClasses\ChatRoom.cs" />
     <Compile Include="ServiceClasses\PrivateConversation.cs" />
-    <Compile Include="ServiceClasses\IConversation.cs" />
     <Compile Include="ServiceClasses\User.cs" />
     <Compile Include="ZenChat.svc.cs">
       <DependentUpon>ZenChat.svc</DependentUpon>
@@ -108,6 +109,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

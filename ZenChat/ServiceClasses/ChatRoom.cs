@@ -1,15 +1,16 @@
 // Copyright (c) 2016 Pascal Honegger
 // All rights reserved.
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ZenChat.ServiceClasses
 {
 	[DataContract]
-	public abstract class ChatRoom : IConversation
+	public class ChatRoom
 	{
-		protected ChatRoom(string id)
+		public ChatRoom(int id)
 		{
 			Id = id;
 		}
@@ -18,14 +19,23 @@ namespace ZenChat.ServiceClasses
 		public User Admin { get; set; }
 
 		[DataMember]
-		public string Id { get; }
+		public int Id { get; }
 
-		public IEnumerable<ChatMessage> Messages { get; set; }
-		public IEnumerable<User> Members { get; set; }
+		[DataMember]
+		public IEnumerable<ChatMessage> Messages
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[DataMember]
+		public IEnumerable<User> Members
+		{
+			get { throw new NotImplementedException(); }
+		}
 
 		private bool Equals(ChatRoom other)
 		{
-			return string.Equals(Id, other.Id);
+			return Id == other.Id;
 		}
 
 		/// <summary>
@@ -52,7 +62,7 @@ namespace ZenChat.ServiceClasses
 		/// <filterpriority>2</filterpriority>
 		public override int GetHashCode()
 		{
-			return Id?.GetHashCode() ?? 0;
+			return Id.GetHashCode();
 		}
 	}
 }

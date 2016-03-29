@@ -11,18 +11,16 @@ namespace ZenChat.ServiceClasses
 	///     Interface für den allgemeinen ZenChat
 	/// </summary>
 	[ServiceContract(
-		Name = "ZenChat",
-		ConfigurationName = "ZenChat",
+		Name = "ZenChatService",
+		ConfigurationName = "ZenChatService",
 		Namespace = "http://zenchatservice.azurewebsites.net/ZenChat.svc",
 		SessionMode = SessionMode.NotAllowed)]
-	[ServiceKnownType(typeof(IConversation))]
-	[ServiceKnownType(typeof(IEnumerable<IConversation>))]
 	public interface IZenChat
 	{
 		#region user
 
 		/// <summary>
-		///     Ladet den User anhand seiner ID
+		///     Ladet den User anhand seiner Telefonnummer
 		/// </summary>
 		/// <param name="phoneNumber">Die Nummer des zu ladenden Users</param>
 		/// <returns>Der geladene User, falls dieser existiert</returns>
@@ -38,15 +36,23 @@ namespace ZenChat.ServiceClasses
 		/// <param name="phone">Telefonnummer des Users</param>
 		/// <returns>User und seine <see cref="User.Id" /></returns>
 		[OperationContract]
-		Tuple<string, User> Login(string name, string phone);
+		Tuple<int, User> Login(string phone, string name);
+
+		/// <summary>
+		///     Meldet einen User mit einer ID an. Benutzt für das "Angemeldet bleiben" Feature.
+		/// </summary>
+		/// <param name="id">ID des users</param>
+		/// <returns>User, falls dieser existiert</returns>
+		[OperationContract]
+		User LoginWithId(int id);
 
 		/// <summary>
 		///     Lädt die freunde eines Users.
 		/// </summary>
-		/// <param name="user">User</param>
+		/// <param name="userId">User</param>
 		/// <returns>Alle Freunde des Users</returns>
 		[OperationContract]
-		IEnumerable<User> GetFriends(User user);
+		IEnumerable<User> GetFriends(int userId);
 
 		#endregion
 
@@ -58,7 +64,7 @@ namespace ZenChat.ServiceClasses
 		/// <param name="userId">Der Spieler, von welchem alle Lobbies geladen werden.</param>
 		/// <returns></returns>
 		[OperationContract]
-		IConversation GetAllChatRooms(string userId);
+		IEnumerable<ChatRoom> GetAllChatRooms(int userId);
 
 		/// <summary>
 		///     Lädt den mitgegebenen Chat.
@@ -66,28 +72,24 @@ namespace ZenChat.ServiceClasses
 		/// <param name="chatRoomId">Der zu ladende Chat</param>
 		/// <returns></returns>
 		[OperationContract]
-		IConversation GetChatRoom(string chatRoomId);
+		ChatRoom GetChatRoom(int chatRoomId);
 
 		/// <summary>
 		///     Erstellt einen neuen Chat
 		/// </summary>
-		/// <param name="userId"></param>
-		/// <returns></returns>
+		/// <param name="userId">Autor</param>
+		/// <returns>Ersteller Chat</returns>
 		[OperationContract]
-		IConversation CreateChatRoom(string userId);
+		ChatRoom CreateChatRoom(int userId);
 
 		/// <summary>
 		///     Tritt einen Chat bei
 		/// </summary>
-		/// <param name="userId">User</param>
+		/// <param name="userId">Der jetzige Use</param>
+		/// <param name="phoneNumber">Einzuladender</param>
 		/// <param name="chatRoomId">Beizutretender Chat</param>
-		/// <returns></returns>
 		[OperationContract]
-		IConversation JoinChatroom(string userId, string chatRoomId);
-
-		#endregion
-
-		#region ChatMessages
+		void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId);
 
 		/// <summary>
 		///     Schriebt eine Chat-Message in den mitgegebenen Chat
@@ -97,7 +99,34 @@ namespace ZenChat.ServiceClasses
 		/// <param name="message">Nachricht</param>
 		/// <returns></returns>
 		[OperationContract]
-		IConversation WriteChatMessage(string userId, string chatRoomId, string message);
+		ChatRoom WriteGroupChatMessage(int userId, int chatRoomId, string message);
+
+		#endregion
+
+		#region PrivateChat
+
+		/// <summary>
+		///     Lädt die aktuelle Konversation
+		/// </summary>
+		/// <param name="userId">Autor</param>
+		/// <param name="otherPhone">Mit wem</param>
+		/// <returns></returns>
+		[OperationContract]
+		PrivateConversation GetPrivateConversation(int userId, string otherPhone);
+
+		/// <summary>
+		///     Schriebt eine Chat-Message in den mitgegebenen Chat
+		/// </summary>
+		/// <param name="userId">Autor</param>
+		/// <param name="otherPhone">Mit wem</param>
+		/// <param name="message">Nachricht</param>
+		/// <returns></returns>
+		[OperationContract]
+		PrivateConversation WritePrivateChatMessage(int userId, string otherPhone, string message);
+
+		#endregion
+
+		#region ChatMessages
 
 		/// <summary>
 		///     Markiere eine Nachricht als gelesen
@@ -106,7 +135,7 @@ namespace ZenChat.ServiceClasses
 		/// <param name="messageId">Nachricht</param>
 		/// <returns></returns>
 		[OperationContract]
-		IConversation ReadChatMessage(string userId, string messageId);
+		void ReadChatMessage(int userId, int messageId);
 
 		/// <summary>
 		///     Markiere eine Nachricht als empfangen
@@ -115,7 +144,7 @@ namespace ZenChat.ServiceClasses
 		/// <param name="messageId">Nachricht</param>
 		/// <returns></returns>
 		[OperationContract]
-		IConversation RecieveChatMessage(string userId, string messageId);
+		void RecieveChatMessage(int userId, int messageId);
 
 		#endregion
 	}
