@@ -39,12 +39,16 @@ namespace ZenChat.ServiceClasses
 		Tuple<int, User> Login(string phone, string name);
 
 		/// <summary>
-		///     Meldet einen User mit einer ID an. Benutzt für das "Angemeldet bleiben" Feature.
+		///     Lädt einen User anhand der ID. Benutzt intern und für das "Angemeldet bleiben" Feature.
 		/// </summary>
 		/// <param name="id">ID des users</param>
 		/// <returns>User, falls dieser existiert</returns>
 		[OperationContract]
-		User LoginWithId(int id);
+		User GetUserFromId(int id);
+
+		#endregion
+
+		#region friends
 
 		/// <summary>
 		///     Lädt die freunde eines Users.
@@ -53,6 +57,22 @@ namespace ZenChat.ServiceClasses
 		/// <returns>Alle Freunde des Users</returns>
 		[OperationContract]
 		IEnumerable<User> GetFriends(int userId);
+
+		/// <summary>
+		///     Fügt einen Freund hinzu.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="otherPhone">Hinzuzufügender Freund</param>
+		[OperationContract]
+		void AddFriend(int userId, string otherPhone);
+
+		/// <summary>
+		///     Entfernt einen Freund hinzu.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="otherPhone">Zu entfernender Freund</param>
+		[OperationContract]
+		void RemoveFriend(int userId, string otherPhone);
 
 		#endregion
 
@@ -70,9 +90,10 @@ namespace ZenChat.ServiceClasses
 		///     Lädt den mitgegebenen Chat.
 		/// </summary>
 		/// <param name="chatRoomId">Der zu ladende Chat</param>
-		/// <returns></returns>
+		/// <param name="playerId">Der Spieler, an wen die Nachrichten gesendet wurden</param>
+		/// <returns>Chat, falls dieser existiert</returns>
 		[OperationContract]
-		ChatRoom GetChatRoom(int chatRoomId);
+		ChatRoom GetChatRoom(int chatRoomId, int playerId);
 
 		/// <summary>
 		///     Erstellt einen neuen Chat
@@ -83,7 +104,7 @@ namespace ZenChat.ServiceClasses
 		ChatRoom CreateChatRoom(int userId);
 
 		/// <summary>
-		///     Tritt einen Chat bei
+		///     Lädt einen Freund zu einem chat ein
 		/// </summary>
 		/// <param name="userId">Der jetzige Use</param>
 		/// <param name="phoneNumber">Einzuladender</param>

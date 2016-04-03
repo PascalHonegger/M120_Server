@@ -10,6 +10,15 @@ namespace ZenChat.ServiceClasses
 	[DataContract]
 	public class ChatMessage
 	{
+		/// <summary>
+		///     Lädt eine Chatmessage.
+		/// </summary>
+		/// <param name="idMessageUser">ID_Message_User</param>
+		public ChatMessage(int idMessageUser)
+		{
+			throw new NotImplementedException();
+		}
+
 		[DataMember]
 		public int Id { get; }
 
