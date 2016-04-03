@@ -49,6 +49,12 @@ namespace ZenChat.ServiceClasses
 		public int Id { get; }
 
 		/// <summary>
+		///     Das Thema des Chats. Kann beim Erstellen eines Chats gesetzt werden.
+		/// </summary>
+		[DataMember]
+		public string Topic { get; }
+
+		/// <summary>
 		///     An welchem Datum dieser Chatraum erstellt wurde.
 		/// </summary>
 		[DataMember]

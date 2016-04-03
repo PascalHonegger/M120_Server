@@ -99,9 +99,10 @@ namespace ZenChat.ServiceClasses
 		///     Erstellt einen neuen Chat
 		/// </summary>
 		/// <param name="userId">Autor</param>
+		/// <param name="topic">Thema</param>
 		/// <returns>Ersteller Chat</returns>
 		[OperationContract]
-		ChatRoom CreateChatRoom(int userId);
+		ChatRoom CreateChatRoom(int userId, string topic);
 
 		/// <summary>
 		///     Lädt einen Freund zu einem chat ein

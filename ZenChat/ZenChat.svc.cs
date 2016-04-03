@@ -27,7 +27,7 @@ namespace ZenChat
 			{
 				connection.Open();
 
-				var command = new SqlCommand("SELECT id_user, name, phone FROM [user] where phone = @phone", connection);
+				var command = new SqlCommand("SELECT id_user, name FROM [user] where phone = @phone", connection);
 
 				command.Parameters.Add(new SqlParameter("@phone", SqlDbType.NVarChar));
 
@@ -39,7 +39,6 @@ namespace ZenChat
 				{
 					var id = reader.GetInt32(0);
 					var name = reader.GetString(1);
-					var phone = reader.GetString(2);
 					return new User(id, name, phoneNumber);
 				}
 			}
@@ -73,7 +72,7 @@ namespace ZenChat
 				{
 					connection.Open();
 
-					var command = new SqlCommand("INSERT INTO [user] VALUES(null, @name, @phone)", connection);
+					var command = new SqlCommand("INSERT INTO [user] (name, phone) OUTPUT INSERTED.id_user VALUES(@name, @phone)", connection);
 
 					command.Parameters.Add(new SqlParameter("@phone", SqlDbType.NVarChar));
 					command.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar));
@@ -81,24 +80,7 @@ namespace ZenChat
 					command.Parameters["@phone"].Value = phone;
 					command.Parameters["@name"].Value = name;
 
-					command.ExecuteNonQuery();
-
-					//Get User-ID
-					command = new SqlCommand("SELECT LAST_INSERT_ID() as Id", connection);
-
-					var reader = command.ExecuteReader();
-
-					var userId = -1;
-					if (reader.Read())
-					{
-						userId = reader.GetInt32(0);
-					}
-					reader.Close();
-
-					if (userId == -1)
-					{
-						throw new LoginFailedException();
-					}
+					var userId = (int)command.ExecuteScalar();
 
 					var user = new User(userId, name, phone);
 
@@ -181,7 +163,7 @@ namespace ZenChat
 			return new ChatRoom(chatRoomId, playerId);
 		}
 
-		public ChatRoom CreateChatRoom(int userId)
+		public ChatRoom CreateChatRoom(int userId, string topic)
 		{
 			throw new NotImplementedException();
 		}
