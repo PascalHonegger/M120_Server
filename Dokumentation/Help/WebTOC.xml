@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpTOC>
+
+  <HelpTOCNode Id="32fdafc6-9688-4709-94ac-2807313278d7" Title="ZenChat" Url="html/R_Project_Documentation.htm">
+    <HelpTOCNode Id="5bc92c89-c8f9-4711-8c82-cb4412b7e9dc" Title="ZenChatService" Url="html/N_ZenChatService.htm">
+      <HelpTOCNode Id="922fa4be-1a47-4d59-b7fe-fa71a96fa356" Title="ZenChat Class" Url="html/T_ZenChatService_ZenChat.htm">
+        <HelpTOCNode Title="ZenChat Constructor " Url="html/M_ZenChatService_ZenChat__ctor.htm" />
+        <HelpTOCNode Id="1e151356-5e8d-4acb-8ed4-9c076765030a" Title="ZenChat Methods" Url="html/Methods_T_ZenChatService_ZenChat.htm">
+          <HelpTOCNode Title="AddFriend Method " Url="html/M_ZenChatService_ZenChat_AddFriend.htm" />
+          <HelpTOCNode Title="CreateChatRoom Method " Url="html/M_ZenChatService_ZenChat_CreateChatRoom.htm" />
+          <HelpTOCNode Title="GetAllChatRooms Method " Url="html/M_ZenChatService_ZenChat_GetAllChatRooms.htm" />
+          <HelpTOCNode Title="GetChatRoom Method " Url="html/M_ZenChatService_ZenChat_GetChatRoom.htm" />
+          <HelpTOCNode Title="GetFriends Method " Url="html/M_ZenChatService_ZenChat_GetFriends.htm" />
+          <HelpTOCNode Title="GetPrivateConversation Method " Url="html/M_ZenChatService_ZenChat_GetPrivateConversation.htm" />
+          <HelpTOCNode Title="GetUser Method " Url="html/M_ZenChatService_ZenChat_GetUser.htm" />
+          <HelpTOCNode Title="GetUserFromId Method " Url="html/M_ZenChatService_ZenChat_GetUserFromId.htm" />
+          <HelpTOCNode Title="InviteToChatRoom Method " Url="html/M_ZenChatService_ZenChat_InviteToChatRoom.htm" />
+          <HelpTOCNode Title="Login Method " Url="html/M_ZenChatService_ZenChat_Login.htm" />
+          <HelpTOCNode Title="ReadChatMessage Method " Url="html/M_ZenChatService_ZenChat_ReadChatMessage.htm" />
+          <HelpTOCNode Title="RecieveChatMessage Method " Url="html/M_ZenChatService_ZenChat_RecieveChatMessage.htm" />
+          <HelpTOCNode Title="RemoveFriend Method " Url="html/M_ZenChatService_ZenChat_RemoveFriend.htm" />
+          <HelpTOCNode Title="WriteGroupChatMessage Method " Url="html/M_ZenChatService_ZenChat_WriteGroupChatMessage.htm" />
+          <HelpTOCNode Title="WritePrivateChatMessage Method " Url="html/M_ZenChatService_ZenChat_WritePrivateChatMessage.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="ef259d14-b1f5-4fc7-a13a-f230006e963b" Title="ZenChatService.Exceptions" Url="html/N_ZenChatService_Exceptions.htm">
+      <HelpTOCNode Id="4a639b73-61e2-43d6-b2a5-9dfa8e7938ac" Title="ChatNotFoundExcetion Class" Url="html/T_ZenChatService_Exceptions_ChatNotFoundExcetion.htm">
+        <HelpTOCNode Title="ChatNotFoundExcetion Constructor " Url="html/M_ZenChatService_Exceptions_ChatNotFoundExcetion__ctor.htm" />
+        <HelpTOCNode Title="ChatNotFoundExcetion Properties" Url="html/Properties_T_ZenChatService_Exceptions_ChatNotFoundExcetion.htm" />
+        <HelpTOCNode Title="ChatNotFoundExcetion Methods" Url="html/Methods_T_ZenChatService_Exceptions_ChatNotFoundExcetion.htm" />
+        <HelpTOCNode Title="ChatNotFoundExcetion Events" Url="html/Events_T_ZenChatService_Exceptions_ChatNotFoundExcetion.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="dbee9945-c36a-4450-bec6-333efb4b6873" Title="UserNotFoundException Class" Url="html/T_ZenChatService_Exceptions_UserNotFoundException.htm">
+        <HelpTOCNode Title="UserNotFoundException Constructor " Url="html/M_ZenChatService_Exceptions_UserNotFoundException__ctor.htm" />
+        <HelpTOCNode Title="UserNotFoundException Properties" Url="html/Properties_T_ZenChatService_Exceptions_UserNotFoundException.htm" />
+        <HelpTOCNode Title="UserNotFoundException Methods" Url="html/Methods_T_ZenChatService_Exceptions_UserNotFoundException.htm" />
+        <HelpTOCNode Title="UserNotFoundException Events" Url="html/Events_T_ZenChatService_Exceptions_UserNotFoundException.htm" />
+      </HelpTOCNode>
+    </HelpTOCNode>
+    <HelpTOCNode Id="1201d905-a33c-4693-9975-4eabb1fe0879" Title="ZenChatService.ServiceClasses" Url="html/N_ZenChatService_ServiceClasses.htm">
+      <HelpTOCNode Id="df0d7c1a-bbeb-4585-a238-81397c443eb5" Title="ChatMessage Class" Url="html/T_ZenChatService_ServiceClasses_ChatMessage.htm">
+        <HelpTOCNode Title="ChatMessage Constructor " Url="html/M_ZenChatService_ServiceClasses_ChatMessage__ctor.htm" />
+        <HelpTOCNode Id="3b3b38ac-b303-4b09-9b72-177e24f63a37" Title="ChatMessage Properties" Url="html/Properties_T_ZenChatService_ServiceClasses_ChatMessage.htm">
+          <HelpTOCNode Title="ArrivedAt Property " Url="html/P_ZenChatService_ServiceClasses_ChatMessage_ArrivedAt.htm" />
+          <HelpTOCNode Title="Author Property " Url="html/P_ZenChatService_ServiceClasses_ChatMessage_Author.htm" />
+          <HelpTOCNode Title="Created Property " Url="html/P_ZenChatService_ServiceClasses_ChatMessage_Created.htm" />
+          <HelpTOCNode Title="Id Property " Url="html/P_ZenChatService_ServiceClasses_ChatMessage_Id.htm" />
+          <HelpTOCNode Title="Message Property " Url="html/P_ZenChatService_ServiceClasses_ChatMessage_Message.htm" />
+          <HelpTOCNode Title="ReadBy Property " Url="html/P_ZenChatService_ServiceClasses_ChatMessage_ReadBy.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="67a594a5-b103-413a-a5b0-395c0ddaf679" Title="ChatMessage Methods" Url="html/Methods_T_ZenChatService_ServiceClasses_ChatMessage.htm">
+          <HelpTOCNode Title="Equals Method " Url="html/M_ZenChatService_ServiceClasses_ChatMessage_Equals.htm" />
+          <HelpTOCNode Title="GetHashCode Method " Url="html/M_ZenChatService_ServiceClasses_ChatMessage_GetHashCode.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="93944c96-cb41-4c2f-8ab8-9463ad71ca1d" Title="ChatRoom Class" Url="html/T_ZenChatService_ServiceClasses_ChatRoom.htm">
+        <HelpTOCNode Title="ChatRoom Constructor " Url="html/M_ZenChatService_ServiceClasses_ChatRoom__ctor.htm" />
+        <HelpTOCNode Id="5e4f4c21-93c6-468e-b816-fd61e4b9c6e6" Title="ChatRoom Properties" Url="html/Properties_T_ZenChatService_ServiceClasses_ChatRoom.htm">
+          <HelpTOCNode Title="Admin Property " Url="html/P_ZenChatService_ServiceClasses_ChatRoom_Admin.htm" />
+          <HelpTOCNode Title="Created Property " Url="html/P_ZenChatService_ServiceClasses_ChatRoom_Created.htm" />
+          <HelpTOCNode Title="Id Property " Url="html/P_ZenChatService_ServiceClasses_ChatRoom_Id.htm" />
+          <HelpTOCNode Title="Members Property " Url="html/P_ZenChatService_ServiceClasses_ChatRoom_Members.htm" />
+          <HelpTOCNode Title="Messages Property " Url="html/P_ZenChatService_ServiceClasses_ChatRoom_Messages.htm" />
+          <HelpTOCNode Title="Topic Property " Url="html/P_ZenChatService_ServiceClasses_ChatRoom_Topic.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="3ae1617d-2c4a-4352-abcc-0ef3263f0e31" Title="ChatRoom Methods" Url="html/Methods_T_ZenChatService_ServiceClasses_ChatRoom.htm">
+          <HelpTOCNode Title="Equals Method " Url="html/M_ZenChatService_ServiceClasses_ChatRoom_Equals.htm" />
+          <HelpTOCNode Title="GetHashCode Method " Url="html/M_ZenChatService_ServiceClasses_ChatRoom_GetHashCode.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="fd86c593-b6d0-4bea-95b2-e28facabcbe6" Title="IZenChat Interface" Url="html/T_ZenChatService_ServiceClasses_IZenChat.htm">
+        <HelpTOCNode Id="2bacccb4-2caa-4def-9a18-44e3e7ef9c62" Title="IZenChat Methods" Url="html/Methods_T_ZenChatService_ServiceClasses_IZenChat.htm">
+          <HelpTOCNode Title="AddFriend Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_AddFriend.htm" />
+          <HelpTOCNode Title="CreateChatRoom Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_CreateChatRoom.htm" />
+          <HelpTOCNode Title="GetAllChatRooms Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_GetAllChatRooms.htm" />
+          <HelpTOCNode Title="GetChatRoom Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_GetChatRoom.htm" />
+          <HelpTOCNode Title="GetFriends Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_GetFriends.htm" />
+          <HelpTOCNode Title="GetPrivateConversation Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_GetPrivateConversation.htm" />
+          <HelpTOCNode Title="GetUser Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_GetUser.htm" />
+          <HelpTOCNode Title="GetUserFromId Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_GetUserFromId.htm" />
+          <HelpTOCNode Title="InviteToChatRoom Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_InviteToChatRoom.htm" />
+          <HelpTOCNode Title="Login Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_Login.htm" />
+          <HelpTOCNode Title="ReadChatMessage Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_ReadChatMessage.htm" />
+          <HelpTOCNode Title="RecieveChatMessage Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_RecieveChatMessage.htm" />
+          <HelpTOCNode Title="RemoveFriend Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_RemoveFriend.htm" />
+          <HelpTOCNode Title="WriteGroupChatMessage Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_WriteGroupChatMessage.htm" />
+          <HelpTOCNode Title="WritePrivateChatMessage Method " Url="html/M_ZenChatService_ServiceClasses_IZenChat_WritePrivateChatMessage.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+      <HelpTOCNode Id="4f326e99-86b0-45dd-87c6-33159e9de5bd" Title="PrivateConversation Class" Url="html/T_ZenChatService_ServiceClasses_PrivateConversation.htm">
+        <HelpTOCNode Title="PrivateConversation Constructor " Url="html/M_ZenChatService_ServiceClasses_PrivateConversation__ctor.htm" />
+        <HelpTOCNode Id="e84a5365-fb63-41bb-ba2e-9591a0e54964" Title="PrivateConversation Properties" Url="html/Properties_T_ZenChatService_ServiceClasses_PrivateConversation.htm">
+          <HelpTOCNode Title="Members Property " Url="html/P_ZenChatService_ServiceClasses_PrivateConversation_Members.htm" />
+          <HelpTOCNode Title="Messages Property " Url="html/P_ZenChatService_ServiceClasses_PrivateConversation_Messages.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Title="PrivateConversation Methods" Url="html/Methods_T_ZenChatService_ServiceClasses_PrivateConversation.htm" />
+      </HelpTOCNode>
+      <HelpTOCNode Id="8101bcd9-43cf-4bf2-b337-10335437c5b6" Title="User Class" Url="html/T_ZenChatService_ServiceClasses_User.htm">
+        <HelpTOCNode Id="7954cb87-62b8-4521-bd2d-adcc4c796b9e" Title="User Constructor " Url="html/Overload_ZenChatService_ServiceClasses_User__ctor.htm">
+          <HelpTOCNode Title="User Constructor (Int32)" Url="html/M_ZenChatService_ServiceClasses_User__ctor.htm" />
+          <HelpTOCNode Title="User Constructor (Int32, String, String)" Url="html/M_ZenChatService_ServiceClasses_User__ctor_1.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="c49997cf-5c63-44bf-8f67-6c02c54d83de" Title="User Properties" Url="html/Properties_T_ZenChatService_ServiceClasses_User.htm">
+          <HelpTOCNode Title="Friends Property " Url="html/P_ZenChatService_ServiceClasses_User_Friends.htm" />
+          <HelpTOCNode Title="Id Property " Url="html/P_ZenChatService_ServiceClasses_User_Id.htm" />
+          <HelpTOCNode Title="Name Property " Url="html/P_ZenChatService_ServiceClasses_User_Name.htm" />
+          <HelpTOCNode Title="PhoneNumber Property " Url="html/P_ZenChatService_ServiceClasses_User_PhoneNumber.htm" />
+        </HelpTOCNode>
+        <HelpTOCNode Id="23f6ea76-befc-44a8-bf80-ef7bd354390f" Title="User Methods" Url="html/Methods_T_ZenChatService_ServiceClasses_User.htm">
+          <HelpTOCNode Title="Equals Method " Url="html/M_ZenChatService_ServiceClasses_User_Equals.htm" />
+          <HelpTOCNode Title="GetHashCode Method " Url="html/M_ZenChatService_ServiceClasses_User_GetHashCode.htm" />
+        </HelpTOCNode>
+      </HelpTOCNode>
+    </HelpTOCNode>
+  </HelpTOCNode>
+</HelpTOC>
