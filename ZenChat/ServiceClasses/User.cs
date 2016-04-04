@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
-using ZenChat.Exceptions;
-using ZenChat.Properties;
+using ZenChatService.Exceptions;
+using ZenChatService.Properties;
 
-namespace ZenChat.ServiceClasses
+namespace ZenChatService.ServiceClasses
 {
 	/// <summary>
 	///     Die Klasse eines Users. Beinhaltet alle notwendigen Informationen über einen User.
@@ -94,12 +94,14 @@ namespace ZenChat.ServiceClasses
 
 				if (reader.Read())
 				{
-					Name = reader.GetString(1);
-					PhoneNumber = reader.GetString(2);
+					Name = reader.GetString(0);
+					PhoneNumber = reader.GetString(1);
+				}
+				else
+				{
+					throw new UserNotFoundException();
 				}
 			}
-
-			throw new UserNotFoundException();
 		}
 
 		private bool Equals(User other)

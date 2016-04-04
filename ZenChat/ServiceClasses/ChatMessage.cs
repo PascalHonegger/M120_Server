@@ -5,8 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace ZenChat.ServiceClasses
+namespace ZenChatService.ServiceClasses
 {
+	/// <summary>
+	/// Eine Chatnachricht. Ist generisch für Private und Gruppennachrichten.
+	/// </summary>
 	[DataContract]
 	public class ChatMessage
 	{
@@ -19,29 +22,60 @@ namespace ZenChat.ServiceClasses
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		/// ID dieser Nachricht.
+		/// </summary>
 		[DataMember]
 		public int Id { get; }
 
+		/// <summary>
+		/// Der Author dieser Nachricht.
+		/// </summary>
 		[DataMember]
-		public User Author { get; set; }
+		public User Author { get; }
 
+		/// <summary>
+		/// Die eigentliche Nachricht. 
+		/// </summary>
 		[DataMember]
-		public string Message { get; set; }
+		public string Message { get; }
 
+		/// <summary>
+		/// Das Datum, an welchem diese Nachricht gesendet / erstellt wurde.
+		/// </summary>
 		[DataMember]
-		public DateTime Created { get; set; }
+		public DateTime Created { get; }
 
+		/// <summary>
+		/// Die Liste der User, bei welcher diese Nachricht angekommen ist.
+		/// </summary>
 		[DataMember]
-		public IEnumerable<User> ArrivedAt { get; set; }
-
-		[DataMember]
-		public IEnumerable<User> ReadBy { get; set; }
-
-		private bool Equals(ChatMessage other)
+		public IEnumerable<User> ArrivedAt
 		{
-			return Equals(Id, other.Id);
+			get
+			{
+				throw new NotImplementedException();
+			}
 		}
 
+		/// <summary>
+		/// Die Liste der User, welche diese Nachricht gelesen haben.
+		/// </summary>
+		[DataMember]
+		public IEnumerable<User> ReadBy
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		private bool Equals(ChatMessage other) => Equals(Id, other.Id);
+
+		/// <summary>Bestimmt, ob das angegebene Objekt mit dem aktuellen Objekt identisch ist.</summary>
+		/// <returns>true, wenn das angegebene Objekt und das aktuelle Objekt gleich sind, andernfalls false.</returns>
+		/// <param name="obj">Das Objekt, das mit dem aktuellen Objekt verglichen werden soll. </param>
+		/// <filterpriority>2</filterpriority>
 		public override bool Equals(object obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
@@ -49,9 +83,9 @@ namespace ZenChat.ServiceClasses
 			return obj.GetType() == GetType() && Equals((ChatMessage) obj);
 		}
 
-		public override int GetHashCode()
-		{
-			return Id.GetHashCode();
-		}
+		/// <summary>Fungiert als die Standardhashfunktion. </summary>
+		/// <returns>Ein Hashcode für das aktuelle Objekt.</returns>
+		/// <filterpriority>2</filterpriority>
+		public override int GetHashCode() => Id.GetHashCode();
 	}
 }

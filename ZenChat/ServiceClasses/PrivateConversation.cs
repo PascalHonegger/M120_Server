@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
-using ZenChat.Properties;
+using ZenChatService.Properties;
 
-namespace ZenChat.ServiceClasses
+namespace ZenChatService.ServiceClasses
 {
 	/// <summary>
 	///     Eine Konversation zwischen zwei Freunden
@@ -15,11 +15,19 @@ namespace ZenChat.ServiceClasses
 	[DataContract]
 	public class PrivateConversation
 	{
+		/// <summary>
+		/// Initialisiert die Private Konversation.
+		/// </summary>
+		/// <param name="member1">Erster Teilnehmer</param>
+		/// <param name="member2">Zweiter Teilnehmer</param>
 		public PrivateConversation(User member1, User member2)
 		{
 			Members = new List<User> {member1, member2};
 		}
 
+		/// <summary>
+		/// Alle Nachrichten, welche zwischen den beiden <see cref="Members"/> gesendet wurden.
+		/// </summary>
 		[DataMember]
 		public IEnumerable<ChatMessage> Messages
 		{

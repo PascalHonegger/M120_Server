@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 
-namespace ZenChat.ServiceClasses
+namespace ZenChatService.ServiceClasses
 {
 	/// <summary>
 	///     Interface für den allgemeinen ZenChat
@@ -17,7 +17,7 @@ namespace ZenChat.ServiceClasses
 		SessionMode = SessionMode.NotAllowed)]
 	public interface IZenChat
 	{
-		#region user
+		#region User
 
 		/// <summary>
 		///     Ladet den User anhand seiner Telefonnummer
@@ -48,7 +48,7 @@ namespace ZenChat.ServiceClasses
 
 		#endregion
 
-		#region friends
+		#region Freunde
 
 		/// <summary>
 		///     Lädt die freunde eines Users.
@@ -76,7 +76,7 @@ namespace ZenChat.ServiceClasses
 
 		#endregion
 
-		#region Chatroom
+		#region Chatraum
 
 		/// <summary>
 		///     Lädt alle Chats, welche der mitgegebene Spieler sehen kann.
@@ -125,7 +125,7 @@ namespace ZenChat.ServiceClasses
 
 		#endregion
 
-		#region PrivateChat
+		#region Privater Chat
 
 		/// <summary>
 		///     Lädt die aktuelle Konversation
@@ -148,7 +148,7 @@ namespace ZenChat.ServiceClasses
 
 		#endregion
 
-		#region ChatMessages
+		#region Nachricht
 
 		/// <summary>
 		///     Markiere eine Nachricht als gelesen

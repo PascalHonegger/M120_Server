@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace ZenChatTest
+namespace ZenChatServiceTest
 {
 	[TestFixture]
 	public abstract class UnitTestBase<T>

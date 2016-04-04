@@ -5,17 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using ZenChat.Exceptions;
-using ZenChat.Properties;
-using ZenChat.ServiceClasses;
+using ZenChatService.Exceptions;
+using ZenChatService.Properties;
+using ZenChatService.ServiceClasses;
 
-namespace ZenChat
+namespace ZenChatService
 {
 	/// <summary>
 	///     Die Implementation des <see cref="IZenChat" />
 	/// </summary>
 	public class ZenChat : IZenChat
 	{
+		#region User
+
 		/// <summary>
 		///     Ladet den User anhand seiner Telefonnummer
 		/// </summary>
@@ -41,9 +43,10 @@ namespace ZenChat
 					var name = reader.GetString(1);
 					return new User(id, name, phoneNumber);
 				}
-			}
 
-			throw new UserNotFoundException();
+
+				throw new UserNotFoundException();
+			}
 		}
 
 		/// <summary>
@@ -72,7 +75,8 @@ namespace ZenChat
 				{
 					connection.Open();
 
-					var command = new SqlCommand("INSERT INTO [user] (name, phone) OUTPUT INSERTED.id_user VALUES(@name, @phone)", connection);
+					var command = new SqlCommand("INSERT INTO [user] (name, phone) OUTPUT INSERTED.id_user VALUES(@name, @phone)",
+						connection);
 
 					command.Parameters.Add(new SqlParameter("@phone", SqlDbType.NVarChar));
 					command.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar));
@@ -80,7 +84,7 @@ namespace ZenChat
 					command.Parameters["@phone"].Value = phone;
 					command.Parameters["@name"].Value = name;
 
-					var userId = (int)command.ExecuteScalar();
+					var userId = (int) command.ExecuteScalar();
 
 					var user = new User(userId, name, phone);
 
@@ -100,6 +104,10 @@ namespace ZenChat
 			return new User(id);
 		}
 
+		#endregion
+
+		#region Freunde
+
 		/// <summary>
 		///     Lädt die freunde eines Users.
 		/// </summary>
@@ -112,15 +120,29 @@ namespace ZenChat
 			return user.Friends;
 		}
 
+		/// <summary>
+		///     Fügt einen Freund hinzu.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="otherPhone">Hinzuzufügender Freund</param>
 		public void AddFriend(int userId, string otherPhone)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		///     Entfernt einen Freund hinzu.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="otherPhone">Zu entfernender Freund</param>
 		public void RemoveFriend(int userId, string otherPhone)
 		{
 			throw new NotImplementedException();
 		}
+
+		#endregion
+
+		#region Chatraum
 
 		/// <summary>
 		///     Lädt alle Chats, welche der mitgegebene Spieler sehen kann.
@@ -163,20 +185,43 @@ namespace ZenChat
 			return new ChatRoom(chatRoomId, playerId);
 		}
 
+		/// <summary>
+		///     Erstellt einen neuen Chat
+		/// </summary>
+		/// <param name="userId">Autor</param>
+		/// <param name="topic">Thema</param>
+		/// <returns>Ersteller Chat</returns>
 		public ChatRoom CreateChatRoom(int userId, string topic)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		///     Lädt einen Freund zu einem chat ein
+		/// </summary>
+		/// <param name="userId">Der jetzige Use</param>
+		/// <param name="phoneNumber">Einzuladender</param>
+		/// <param name="chatRoomId">Beizutretender Chat</param>
 		public void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		///     Schriebt eine Chat-Message in den mitgegebenen Chat
+		/// </summary>
+		/// <param name="userId">Autor</param>
+		/// <param name="chatRoomId">Chat</param>
+		/// <param name="message">Nachricht</param>
+		/// <returns></returns>
 		public ChatRoom WriteGroupChatMessage(int userId, int chatRoomId, string message)
 		{
 			throw new NotImplementedException();
 		}
+
+		#endregion
+
+		#region Privater Chat
 
 		/// <summary>
 		///     Lädt die aktuelle Konversation
@@ -192,19 +237,44 @@ namespace ZenChat
 			return new PrivateConversation(user1, user2);
 		}
 
+		/// <summary>
+		///     Schriebt eine Chat-Message in den mitgegebenen Chat
+		/// </summary>
+		/// <param name="userId">Autor</param>
+		/// <param name="otherPhone">Mit wem</param>
+		/// <param name="message">Nachricht</param>
+		/// <returns></returns>
 		public PrivateConversation WritePrivateChatMessage(int userId, string otherPhone, string message)
 		{
 			throw new NotImplementedException();
 		}
 
+		#endregion
+
+		#region Nachricht
+
+		/// <summary>
+		///     Markiere eine Nachricht als gelesen
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="messageId">Nachricht</param>
+		/// <returns></returns>
 		public void ReadChatMessage(int userId, int messageId)
 		{
 			throw new NotImplementedException();
 		}
 
+		/// <summary>
+		///     Markiere eine Nachricht als empfangen
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="messageId">Nachricht</param>
+		/// <returns></returns>
 		public void RecieveChatMessage(int userId, int messageId)
 		{
 			throw new NotImplementedException();
 		}
+
+		#endregion
 	}
 }

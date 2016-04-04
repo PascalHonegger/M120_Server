@@ -6,8 +6,8 @@
     <ProjectGuid>{05FDE76A-EC39-4B76-9B03-E98D895D887F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ZenChatTest</RootNamespace>
-    <AssemblyName>ZenChatTest</AssemblyName>
+    <RootNamespace>ZenChatServiceTest</RootNamespace>
+    <AssemblyName>ZenChatServiceTest</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -49,11 +49,7 @@
         <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
       </ItemGroup>
     </When>
-    <Otherwise>
-      <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
-      </ItemGroup>
-    </Otherwise>
+    <Otherwise />
   </Choose>
   <ItemGroup>
     <Compile Include="TestBase.cs" />
@@ -64,9 +60,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ZenChat\ZenChat.csproj">
+    <ProjectReference Include="..\ZenChat\ZenChatService.csproj">
       <Project>{a26b54a8-9f40-4b02-b40a-0cc96330327d}</Project>
-      <Name>ZenChat</Name>
+      <Name>ZenChatService</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

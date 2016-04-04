@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
-using ZenChat.Exceptions;
-using ZenChat.Properties;
+using ZenChatService.Exceptions;
+using ZenChatService.Properties;
 
-namespace ZenChat.ServiceClasses
+namespace ZenChatService.ServiceClasses
 {
 	/// <summary>
 	///     Ein Chatraum, welcher eine beliebige Anzahl Users beinhalten kann.
