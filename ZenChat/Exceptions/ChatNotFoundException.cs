@@ -8,6 +8,7 @@ namespace ZenChatService.Exceptions
 	/// <summary>
 	/// Chatraum konnte nicht gefunden werden.
 	/// </summary>
+	[Serializable]
 	public class ChatNotFoundExcetion : Exception
 	{
 		/// <summary>

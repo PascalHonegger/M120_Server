@@ -1,5 +1,7 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using NUnit.Framework;
 using ZenChatService;
 using ZenChatService.Exceptions;
@@ -33,7 +35,7 @@ namespace ZenChatServiceTest
 		{
 			//Arrange
 			const string username = "TestUsername";
-			const string phone = "012 345 67 89";
+			const string phone = "Test 1";
 			UnitUnderTest = new ZenChat();
 
 			//Act
@@ -55,7 +57,7 @@ namespace ZenChatServiceTest
 		{
 			//Arrange
 			const string username = "TestUsername";
-			const string phone = "012 345 67 89";
+			const string phone = "Test 2";
 			UnitUnderTest = new ZenChat();
 
 			//Act
@@ -88,7 +90,7 @@ namespace ZenChatServiceTest
 		{
 			//Arrange
 			const string username = "TestUsername";
-			const string phone = "012 345 67 89";
+			const string phone = "Test 3";
 			UnitUnderTest = new ZenChat();
 
 			//Act
@@ -112,9 +114,70 @@ namespace ZenChatServiceTest
 			const int id = 1;
 			UnitUnderTest = new ZenChat();
 
+			UnitUnderTest.GetUserFromId(id);
+
 			//Act & Assert
 			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUserFromId(id));
 		}
+		#endregion
+
+		#region Chatraum
+
+		private static void DeleteChat(int id)
+		{
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				//Delete Chatroom_Users
+				var command = new SqlCommand("DELETE FROM [chatroom_user] WHERE fk_chatroom = @id", connection);
+
+				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+
+				command.Parameters["@id"].Value = id;
+
+				command.ExecuteNonQuery();
+
+				//Delete Chatrooms
+				command.CommandText = "DELETE FROM [chatroom] WHERE id_chatroom = @id";
+
+				command.ExecuteNonQuery();
+			}
+		}
+
+		[Test]
+		public void TestGetAllChatRoomsReturnsAllChatrooms()
+		{
+			//Arrange
+			const string username = "TestUsername";
+			const string phone = "Test 4";
+			UnitUnderTest = new ZenChat();
+
+			//Act
+			var user = UnitUnderTest.Login(phone, username).Item2;
+			var createdChat1 = UnitUnderTest.CreateChatRoom(user.Id, "ExampleTopic");
+			var createdChat2 = UnitUnderTest.CreateChatRoom(user.Id, "ExampleTopic2");
+
+			//Assert
+			var allChatRooms = UnitUnderTest.GetAllChatRooms(user.Id).ToList();
+
+			Assert.That(allChatRooms.Contains(createdChat1));
+			Assert.That(allChatRooms.Contains(createdChat2));
+
+			//Cleanup
+			DeleteChat(createdChat1.Id);
+			DeleteChat(createdChat2.Id);
+			DeleteUser(user.Id);
+		}
+		/*
+		ChatRoom GetChatRoom(int chatRoomId, int playerId);
+
+		ChatRoom CreateChatRoom(int userId, string topic);
+
+		void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId);
+
+		ChatRoom WriteGroupChatMessage(int userId, int chatRoomId, string message);
+		*/
 		#endregion
 	}
 }

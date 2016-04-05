@@ -30,25 +30,6 @@ namespace ZenChatService.ServiceClasses
 		}
 
 		/// <summary>
-		///     Setzt die werte des Users.
-		/// </summary>
-		/// <param name="id">
-		///     <see cref="Id" />
-		/// </param>
-		/// <param name="username">
-		///     <see cref="Name" />
-		/// </param>
-		/// <param name="phone">
-		///     <see cref="PhoneNumber" />
-		/// </param>
-		public User(int id, string username, string phone)
-		{
-			Id = id;
-			Name = username;
-			PhoneNumber = phone;
-		}
-
-		/// <summary>
 		///     ID des Spielers. Kommt aus der Datenbank.
 		/// </summary>
 		public int Id { get; }
@@ -70,21 +51,20 @@ namespace ZenChatService.ServiceClasses
 		/// </summary>
 		public IEnumerable<User> Friends
 		{
-			get { throw new NotImplementedException(); }
+			get { return new List<User>(); }
 		}
 
 		/// <summary>
 		///     Lädt alle Daten des Users nach.
 		/// </summary>
 		/// <exception cref="UserNotFoundException">Es wurde kein User mit der angegebenen ID gefunden.</exception>
-		/// ;
 		private void ToFullUser()
 		{
 			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
 			{
 				connection.Open();
 
-				var command = new SqlCommand("SELECT name, phone FROM [user] where id_user = @id", connection);
+				var command = new SqlCommand("SELECT name, phone FROM [user] WHERE id_user = @id", connection);
 
 				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
 

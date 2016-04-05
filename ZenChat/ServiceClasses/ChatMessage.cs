@@ -54,7 +54,7 @@ namespace ZenChatService.ServiceClasses
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return new List<User>();
 			}
 		}
 
@@ -66,7 +66,7 @@ namespace ZenChatService.ServiceClasses
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return new List<User>();
 			}
 		}
 

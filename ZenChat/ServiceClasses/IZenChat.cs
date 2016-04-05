@@ -11,13 +11,19 @@ namespace ZenChatService.ServiceClasses
 	///     Interface für den allgemeinen ZenChat
 	/// </summary>
 	[ServiceContract(
-		Name = "ZenChatService",
-		ConfigurationName = "ZenChatService",
-		Namespace = "http://zenchatservice.azurewebsites.net/ZenChat.svc",
-		SessionMode = SessionMode.NotAllowed)]
+		Namespace = "http://zenchatservice.azurewebsites.net/ZenChat.svc")]
 	public interface IZenChat
 	{
 		#region User
+
+		/// <summary>
+		/// Ändert den Username eines Users.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="newUsername">Neuer Username</param>
+		/// <returns></returns>
+		[OperationContract]
+		User ChangeUsername(int userId, string newUsername);
 
 		/// <summary>
 		///     Ladet den User anhand seiner Telefonnummer
@@ -26,6 +32,14 @@ namespace ZenChatService.ServiceClasses
 		/// <returns>Der geladene User, falls dieser existiert</returns>
 		[OperationContract]
 		User GetUser(string phoneNumber);
+
+		/// <summary>
+		///     Lädt einen User anhand der ID. Benutzt intern und für das "Angemeldet bleiben" Feature.
+		/// </summary>
+		/// <param name="id">ID des users</param>
+		/// <returns>User, falls dieser existiert</returns>
+		[OperationContract]
+		User GetUserFromId(int id);
 
 		/// <summary>
 		///     Meldet einen User an. Gibt den nun angemeldeten User zurück.
@@ -37,14 +51,6 @@ namespace ZenChatService.ServiceClasses
 		/// <returns>User und seine <see cref="User.Id" /></returns>
 		[OperationContract]
 		Tuple<int, User> Login(string phone, string name);
-
-		/// <summary>
-		///     Lädt einen User anhand der ID. Benutzt intern und für das "Angemeldet bleiben" Feature.
-		/// </summary>
-		/// <param name="id">ID des users</param>
-		/// <returns>User, falls dieser existiert</returns>
-		[OperationContract]
-		User GetUserFromId(int id);
 
 		#endregion
 

@@ -19,6 +19,32 @@ namespace ZenChatService
 		#region User
 
 		/// <summary>
+		/// Ändert den Username eines Users.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="newUsername">Neuer Username</param>
+		/// <returns></returns>
+		public User ChangeUsername(int userId, string newUsername)
+		{
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("UPDATE [user] SET name=@user WHERE id_user = @id", connection);
+
+				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@user", SqlDbType.NVarChar));
+
+				command.Parameters["@id"].Value = userId;
+				command.Parameters["@user"].Value = newUsername;
+
+				command.ExecuteNonQuery();
+
+				return GetUserFromId(userId);
+			}
+		}
+
+		/// <summary>
 		///     Ladet den User anhand seiner Telefonnummer
 		/// </summary>
 		/// <param name="phoneNumber">Die Nummer des zu ladenden Users</param>
@@ -29,7 +55,7 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("SELECT id_user, name FROM [user] where phone = @phone", connection);
+				var command = new SqlCommand("SELECT id_user FROM [user] WHERE phone = @phone", connection);
 
 				command.Parameters.Add(new SqlParameter("@phone", SqlDbType.NVarChar));
 
@@ -40,8 +66,7 @@ namespace ZenChatService
 				if (reader.Read())
 				{
 					var id = reader.GetInt32(0);
-					var name = reader.GetString(1);
-					return new User(id, name, phoneNumber);
+					return new User(id);
 				}
 
 
@@ -65,7 +90,7 @@ namespace ZenChatService
 				var user = GetUser(phone);
 
 				//User exists
-				return new Tuple<int, User>(user.Id, user);
+				return new Tuple<int, User>(user.Id, ChangeUsername(user.Id, name));
 			}
 			catch (UserNotFoundException)
 			{
@@ -86,7 +111,7 @@ namespace ZenChatService
 
 					var userId = (int) command.ExecuteScalar();
 
-					var user = new User(userId, name, phone);
+					var user = new User(userId);
 
 					return new Tuple<int, User>(userId, user);
 				}
@@ -155,7 +180,7 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("SELECT fk_chatroom FROM [chatroom_user] where fk_person = @userID", connection);
+				var command = new SqlCommand("SELECT fk_chatroom FROM [chatroom_user] WHERE fk_user = @userID", connection);
 
 				command.Parameters.Add(new SqlParameter("@userID", SqlDbType.Int));
 
@@ -170,8 +195,6 @@ namespace ZenChatService
 					yield return GetChatRoom(chatroomId, userId);
 				}
 			}
-
-			throw new UserNotFoundException();
 		}
 
 		/// <summary>
@@ -193,7 +216,33 @@ namespace ZenChatService
 		/// <returns>Ersteller Chat</returns>
 		public ChatRoom CreateChatRoom(int userId, string topic)
 		{
-			throw new NotImplementedException();
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("INSERT INTO [chatroom] (admin, topic) OUTPUT INSERTED.id_chatroom VALUES(@user, @topic)",
+					connection);
+
+				command.Parameters.Add(new SqlParameter("@user", SqlDbType.NVarChar));
+				command.Parameters.Add(new SqlParameter("@topic", SqlDbType.NVarChar));
+
+				command.Parameters["@user"].Value = userId;
+				command.Parameters["@topic"].Value = topic;
+
+				var chatId = (int)command.ExecuteScalar();
+
+				command = new SqlCommand("INSERT INTO [chatroom_user] (fk_user, fk_chatroom) VALUES(@userId, @chatroomId)", connection);
+
+				command.Parameters.Add(new SqlParameter("@userId", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@chatroomId", SqlDbType.Int));
+
+				command.Parameters["@userId"].Value = userId;
+				command.Parameters["@chatroomId"].Value = chatId;
+
+				command.ExecuteNonQuery();
+
+				return new ChatRoom(chatId, userId);
+			}
 		}
 
 		/// <summary>

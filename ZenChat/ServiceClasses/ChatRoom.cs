@@ -94,39 +94,24 @@ namespace ZenChatService.ServiceClasses
 		}
 
 		/// <summary>
-		///     Alle Mitglieder dieses Chatraumes. Beinhaltet nicht den Ersteller (TODO Abklären)!
+		///     Alle Mitglieder dieses Chatraumes.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> Members
-		{
-			get
-			{
-				using (var connection = new SqlConnection(Settings.Default.ConnectionString))
-				{
-					connection.Open();
+		public IEnumerable<User> Members { get; private set; }
 
-					var command = new SqlCommand("SELECT fk_user FROM [chatroom_user] where fk_chatroom = @chatroomId", connection);
-
-					command.Parameters.Add(new SqlParameter("@chatroomId", SqlDbType.Int));
-
-					command.Parameters["@chatroomId"].Value = Id;
-
-					var reader = command.ExecuteReader();
-
-					while (reader.Read())
-					{
-						var idUser = reader.GetInt32(0);
-						yield return new User(idUser);
-					}
-				}
-			}
-		}
+		/// <summary>
+		/// True, falls er immernoch Mitglied ist. False, falls er ein Mitglied war.
+		/// </summary>
+		[DataMember]
+		public bool CanWriteMessages { get; private set; }
 
 		private void ToFullChatroom()
 		{
 			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
 			{
 				connection.Open();
+
+				//Load General Settings
 
 				var command = new SqlCommand("SELECT admin, created FROM [chatroom] where id_chatroom = @id", connection);
 
@@ -147,6 +132,42 @@ namespace ZenChatService.ServiceClasses
 				{
 					throw new ChatNotFoundExcetion();
 				}
+
+				reader.Close();
+
+				//Load Members
+
+				command = new SqlCommand("SELECT fk_user, isMember FROM [chatroom_user] WHERE fk_chatroom = @chatroomId", connection);
+
+				command.Parameters.Add(new SqlParameter("@chatroomId", SqlDbType.Int));
+
+				command.Parameters["@chatroomId"].Value = Id;
+
+				reader = command.ExecuteReader();
+
+				var list = new List<User>();
+
+				var everWasMember = false;
+
+				while (reader.Read())
+				{
+					var idUser = reader.GetInt32(0);
+					//Player is Member
+					if (_playerId == idUser)
+					{
+						CanWriteMessages = reader.GetBoolean(1);
+						everWasMember = true;
+					}
+
+					list.Add(new User(idUser));
+				}
+
+				if (!everWasMember)
+				{
+					throw new MemberNotFoundException();
+				}
+
+				Members = list;
 			}
 		}
 
