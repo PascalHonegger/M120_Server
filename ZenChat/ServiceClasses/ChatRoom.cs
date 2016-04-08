@@ -130,7 +130,7 @@ namespace ZenChatService.ServiceClasses
 				}
 				else
 				{
-					throw new ChatNotFoundExcetion();
+					throw new ChatNotFoundException();
 				}
 
 				reader.Close();

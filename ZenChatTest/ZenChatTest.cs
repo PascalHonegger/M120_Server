@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2016 Pascal Honegger
+// All rights reserved.
+
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -11,7 +13,7 @@ using ZenChatService.ServiceClasses;
 namespace ZenChatServiceTest
 {
 	[TestFixture]
-	public class ZenChatTest : UnitTestBase<IZenChat>
+	public class ZenChatTest : UnitTestBase<ZenChat>
 	{
 		#region User
 		private static void DeleteUser(int id)
@@ -36,7 +38,6 @@ namespace ZenChatServiceTest
 			//Arrange
 			const string username = "TestUsername";
 			const string phone = "Test 1";
-			UnitUnderTest = new ZenChat();
 
 			//Act
 			var result = UnitUnderTest.Login(phone, username);
@@ -58,7 +59,6 @@ namespace ZenChatServiceTest
 			//Arrange
 			const string username = "TestUsername";
 			const string phone = "Test 2";
-			UnitUnderTest = new ZenChat();
 
 			//Act
 			var result = UnitUnderTest.Login(phone, username);
@@ -79,7 +79,6 @@ namespace ZenChatServiceTest
 		{
 			//Arrange
 			const string phone = "This Phone Number will never exist!";
-			UnitUnderTest = new ZenChat();
 
 			//Act & Assert
 			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUser(phone));
@@ -91,7 +90,6 @@ namespace ZenChatServiceTest
 			//Arrange
 			const string username = "TestUsername";
 			const string phone = "Test 3";
-			UnitUnderTest = new ZenChat();
 
 			//Act
 			var result = UnitUnderTest.Login(phone, username);
@@ -151,7 +149,6 @@ namespace ZenChatServiceTest
 			//Arrange
 			const string username = "TestUsername";
 			const string phone = "Test 4";
-			UnitUnderTest = new ZenChat();
 
 			//Act
 			var user = UnitUnderTest.Login(phone, username).Item2;
@@ -169,6 +166,66 @@ namespace ZenChatServiceTest
 			DeleteChat(createdChat2.Id);
 			DeleteUser(user.Id);
 		}
+
+		[Test]
+		public void TestGetAllChatRoomsReturnsNoChatroomsIfNoExist()
+		{
+			//Arrange
+			const string username = "TestUsername";
+			const string phone = "Test 5";
+
+			//Act
+			var user = UnitUnderTest.Login(phone, username).Item2;
+
+			//Assert
+			var allChatRooms = UnitUnderTest.GetAllChatRooms(user.Id).ToList();
+
+			Assert.That(allChatRooms, Is.Empty);
+
+			//Cleanup
+			DeleteUser(user.Id);
+		}
+
+		[Test]
+		public void TestGetChatRoomReturnsCreatedChatroom()
+		{
+			//Arrange
+			const string username = "TestUsername";
+			const string phone = "Test 5";
+
+			//Act
+			var user = UnitUnderTest.Login(phone, username).Item2;
+			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, "ExampleTopic");
+			
+			//Assert
+			var chatFromServer = UnitUnderTest.GetChatRoom(createdChat.Id, user.Id);
+
+			Assert.That(chatFromServer, Is.EqualTo(createdChat));
+
+			//Cleanup
+			DeleteChat(createdChat.Id);
+			DeleteUser(user.Id);
+		}
+
+		[Test]
+		public void TestGetChatRoomThrowsException()
+		{
+			//Act & Assert
+			Assert.Throws<ChatNotFoundException>(() => UnitUnderTest.GetChatRoom(0, 0));
+		}
+
+		[Test, Ignore("Work in Progress Pascal")]
+		public void TestChatroomOnlyShowsMessagesThatWereSentToYou()
+		{
+			//Arrange
+
+			//Act
+
+			//Assert
+
+			//Cleanup
+		}
+
 		/*
 		ChatRoom GetChatRoom(int chatRoomId, int playerId);
 
