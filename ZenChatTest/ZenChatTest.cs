@@ -8,11 +8,9 @@ using NUnit.Framework;
 using ZenChatService;
 using ZenChatService.Exceptions;
 using ZenChatService.Properties;
-using ZenChatService.ServiceClasses;
 
 namespace ZenChatServiceTest
 {
-	[TestFixture]
 	public class ZenChatTest : UnitTestBase<ZenChat>
 	{
 		#region User
@@ -110,9 +108,6 @@ namespace ZenChatServiceTest
 		{
 			//Arrange
 			const int id = 1;
-			UnitUnderTest = new ZenChat();
-
-			UnitUnderTest.GetUserFromId(id);
 
 			//Act & Assert
 			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUserFromId(id));
@@ -214,7 +209,32 @@ namespace ZenChatServiceTest
 			Assert.Throws<ChatNotFoundException>(() => UnitUnderTest.GetChatRoom(0, 0));
 		}
 
-		[Test, Ignore("Work in Progress Pascal")]
+		[Test]
+		public void TestCreatedChatRoomContainsMember()
+		{
+			//Arrange
+			const string username = "TestUsername";
+			const string phone = "Test 6";
+			const string topic = "ExampleTopic";
+
+			//Act
+			var user = UnitUnderTest.Login(phone, username).Item2;
+			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
+
+			//Assert
+			Assert.That(createdChat.Admin, Is.EqualTo(user));
+			Assert.That(createdChat.CanWriteMessages);
+			Assert.That(createdChat.Members, Contains.Item(user));
+			Assert.That(createdChat.Topic, Is.EqualTo(topic));
+			Assert.That(createdChat.Messages, Is.Empty);
+
+			//Cleanup
+			DeleteChat(createdChat.Id);
+			DeleteUser(user.Id);
+		}
+
+		/*
+		[Test]
 		public void TestChatroomOnlyShowsMessagesThatWereSentToYou()
 		{
 			//Arrange
@@ -225,12 +245,9 @@ namespace ZenChatServiceTest
 
 			//Cleanup
 		}
+		*/
 
 		/*
-		ChatRoom GetChatRoom(int chatRoomId, int playerId);
-
-		ChatRoom CreateChatRoom(int userId, string topic);
-
 		void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId);
 
 		ChatRoom WriteGroupChatMessage(int userId, int chatRoomId, string message);

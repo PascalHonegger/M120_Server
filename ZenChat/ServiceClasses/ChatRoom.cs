@@ -52,7 +52,7 @@ namespace ZenChatService.ServiceClasses
 		///     Das Thema des Chats. Kann beim Erstellen eines Chats gesetzt werden.
 		/// </summary>
 		[DataMember]
-		public string Topic { get; }
+		public string Topic { get; private set; }
 
 		/// <summary>
 		///     An welchem Datum dieser Chatraum erstellt wurde.
@@ -113,7 +113,7 @@ namespace ZenChatService.ServiceClasses
 
 				//Load General Settings
 
-				var command = new SqlCommand("SELECT admin, created FROM [chatroom] where id_chatroom = @id", connection);
+				var command = new SqlCommand("SELECT admin, created, topic FROM [chatroom] where id_chatroom = @id", connection);
 
 				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
 
@@ -127,6 +127,7 @@ namespace ZenChatService.ServiceClasses
 					Admin = new User(adminId);
 
 					Created = reader.GetDateTime(1);
+					Topic = reader.GetString(2);
 				}
 				else
 				{
