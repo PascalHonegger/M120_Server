@@ -113,11 +113,20 @@ namespace ZenChatService.ServiceClasses
 		/// <summary>
 		///     Lädt einen Freund zu einem chat ein
 		/// </summary>
-		/// <param name="userId">Der jetzige Use</param>
+		/// <param name="userId">Der jetzige User</param>
 		/// <param name="phoneNumber">Einzuladender</param>
 		/// <param name="chatRoomId">Beizutretender Chat</param>
 		[OperationContract]
 		void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId);
+
+		/// <summary>
+		///     Lädt einen Freund zu einem chat ein
+		/// </summary>
+		/// <param name="userId">Der jetzige User</param>
+		/// <param name="phoneNumber">Einzuladender</param>
+		/// <param name="chatRoomId">Beizutretender Chat</param>
+		[OperationContract]
+		void RemoveFromChatRoom(int userId, string phoneNumber, int chatRoomId);
 
 		/// <summary>
 		///     Schriebt eine Chat-Message in den mitgegebenen Chat

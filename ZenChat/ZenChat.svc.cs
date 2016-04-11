@@ -248,10 +248,21 @@ namespace ZenChatService
 		/// <summary>
 		///     Lädt einen Freund zu einem chat ein
 		/// </summary>
-		/// <param name="userId">Der jetzige Use</param>
+		/// <param name="userId">Der jetzige User</param>
 		/// <param name="phoneNumber">Einzuladender</param>
 		/// <param name="chatRoomId">Beizutretender Chat</param>
 		public void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		///     Lädt einen Freund zu einem chat ein
+		/// </summary>
+		/// <param name="userId">Der jetzige User</param>
+		/// <param name="phoneNumber">Einzuladender</param>
+		/// <param name="chatRoomId">Beizutretender Chat</param>
+		public void RemoveFromChatRoom(int userId, string phoneNumber, int chatRoomId)
 		{
 			throw new NotImplementedException();
 		}

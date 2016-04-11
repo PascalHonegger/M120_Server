@@ -65,6 +65,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\NoPermissionException.cs" />
     <Compile Include="Exceptions\MemberNotFoundException.cs" />
     <Compile Include="Exceptions\ChatNotFoundException.cs" />
     <Compile Include="Exceptions\UserNotFoundException.cs" />
