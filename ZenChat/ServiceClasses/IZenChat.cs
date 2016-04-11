@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Security;
 using System.ServiceModel;
 
 namespace ZenChatService.ServiceClasses
@@ -11,7 +12,10 @@ namespace ZenChatService.ServiceClasses
 	///     Interface für den allgemeinen ZenChat
 	/// </summary>
 	[ServiceContract(
-		Namespace = "http://zenchatservice.azurewebsites.net/ZenChat.svc")]
+		Namespace = "http://zenchatservice.azurewebsites.net/ZenChat.svc",
+		SessionMode = SessionMode.NotAllowed,
+		ProtectionLevel = ProtectionLevel.None,
+		Name = "ZenChatService")]
 	public interface IZenChat
 	{
 		#region User
