@@ -48,10 +48,7 @@ namespace ZenChatService.ServiceClasses
 		/// <summary>
 		///     Alle Freunde des Users
 		/// </summary>
-		public IEnumerable<User> Friends
-		{
-			get { return new List<User>(); }
-		}
+		public IEnumerable<User> Friends => new List<User>();
 
 		/// <summary>
 		///     Lädt alle Daten des Users nach.

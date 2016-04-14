@@ -239,6 +239,38 @@ namespace ZenChatServiceTest
 			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUser(phone));
 		}
 
+		[Test]
+		public void TestChangeUsernameChangesUsername()
+		{
+			//Arrange
+			var user = TemporaryUser;
+			var newUsername = RandomString;
+			
+			//Act
+			var updatedUser = UnitUnderTest.ChangeUsername(user.Id, newUsername);
+
+			//Assert
+			Assert.That(updatedUser.Id, Is.EqualTo(user.Id));
+			Assert.That(updatedUser.PhoneNumber, Is.EqualTo(user.PhoneNumber));
+			Assert.That(updatedUser.Name, Is.EqualTo(newUsername));
+		}
+
+		[Test]
+		public void TestChangePhonenumberChangesPhonenumber()
+		{
+			//Arrange
+			var user = TemporaryUser;
+			var newPhoneNumber = RandomString;
+
+			//Act
+			var updatedUser = UnitUnderTest.ChangePhoneNumber(user.Id, newPhoneNumber);
+
+			//Assert
+			Assert.That(updatedUser.Id, Is.EqualTo(user.Id));
+			Assert.That(updatedUser.PhoneNumber, Is.EqualTo(newPhoneNumber));
+			Assert.That(updatedUser.Name, Is.EqualTo(user.Name));
+		}
+
 		/*
 		[Test]
 		public void TestChatroomOnlyShowsMessagesThatWereSentToYou()

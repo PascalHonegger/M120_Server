@@ -52,7 +52,33 @@ namespace ZenChatService
 		/// <returns></returns>
 		public User ChangePhoneNumber(int userId, string newPhoneNumber)
 		{
-			throw new NotImplementedException();
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("SELECT id_user from [user] where phone = @phone", connection);
+
+				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@phone", SqlDbType.NVarChar));
+
+				command.Parameters["@id"].Value = userId;
+				command.Parameters["@phone"].Value = newPhoneNumber;
+
+				var reader = command.ExecuteReader();
+
+				if (reader.Read())
+				{
+					throw new PhoneNumberAlreadyExistsException();
+				}
+
+				reader.Close();
+
+				command.CommandText = "UPDATE [user] SET phone=@phone WHERE id_user = @id";
+
+				command.ExecuteNonQuery();
+
+				return GetUserFromId(userId);
+			}
 		}
 
 		/// <summary>

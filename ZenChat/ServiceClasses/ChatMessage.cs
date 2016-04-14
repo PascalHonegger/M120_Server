@@ -50,19 +50,13 @@ namespace ZenChatService.ServiceClasses
 		///     Die Liste der User, bei welcher diese Nachricht angekommen ist.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> ArrivedAt
-		{
-			get { return new List<User>(); }
-		}
+		public IEnumerable<User> ArrivedAt => new List<User>();
 
 		/// <summary>
 		///     Die Liste der User, welche diese Nachricht gelesen haben.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> ReadBy
-		{
-			get { return new List<User>(); }
-		}
+		public IEnumerable<User> ReadBy => new List<User>();
 
 		private bool Equals(ChatMessage other) => Equals(Id, other.Id);
 
