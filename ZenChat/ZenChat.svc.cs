@@ -19,7 +19,7 @@ namespace ZenChatService
 		#region User
 
 		/// <summary>
-		/// Ändert den Username eines Users.
+		///     Ändert den Username eines Users.
 		/// </summary>
 		/// <param name="userId">User</param>
 		/// <param name="newUsername">Neuer Username</param>
@@ -42,6 +42,17 @@ namespace ZenChatService
 
 				return GetUserFromId(userId);
 			}
+		}
+
+		/// <summary>
+		///     Ändert die Telefonnummer eines Users.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="newPhoneNumber">Neue Telefonnummer</param>
+		/// <returns></returns>
+		public User ChangePhoneNumber(int userId, string newPhoneNumber)
+		{
+			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -220,8 +231,9 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("INSERT INTO [chatroom] (admin, topic) OUTPUT INSERTED.id_chatroom VALUES(@user, @topic)",
-					connection);
+				var command =
+					new SqlCommand("INSERT INTO [chatroom] (admin, topic) OUTPUT INSERTED.id_chatroom VALUES(@user, @topic)",
+						connection);
 
 				command.Parameters.Add(new SqlParameter("@user", SqlDbType.NVarChar));
 				command.Parameters.Add(new SqlParameter("@topic", SqlDbType.NVarChar));
@@ -229,9 +241,10 @@ namespace ZenChatService
 				command.Parameters["@user"].Value = userId;
 				command.Parameters["@topic"].Value = topic;
 
-				var chatId = (int)command.ExecuteScalar();
+				var chatId = (int) command.ExecuteScalar();
 
-				command = new SqlCommand("INSERT INTO [chatroom_user] (fk_user, fk_chatroom) VALUES(@userId, @chatroomId)", connection);
+				command = new SqlCommand("INSERT INTO [chatroom_user] (fk_user, fk_chatroom) VALUES(@userId, @chatroomId)",
+					connection);
 
 				command.Parameters.Add(new SqlParameter("@userId", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@chatroomId", SqlDbType.Int));

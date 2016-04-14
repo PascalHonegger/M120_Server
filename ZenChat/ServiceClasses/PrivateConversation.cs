@@ -16,7 +16,7 @@ namespace ZenChatService.ServiceClasses
 	public class PrivateConversation
 	{
 		/// <summary>
-		/// Initialisiert die Private Konversation.
+		///     Initialisiert die Private Konversation.
 		/// </summary>
 		/// <param name="member1">Erster Teilnehmer</param>
 		/// <param name="member2">Zweiter Teilnehmer</param>
@@ -26,7 +26,7 @@ namespace ZenChatService.ServiceClasses
 		}
 
 		/// <summary>
-		/// Alle Nachrichten, welche zwischen den beiden <see cref="Members"/> gesendet wurden.
+		///     Alle Nachrichten, welche zwischen den beiden <see cref="Members" /> gesendet wurden.
 		/// </summary>
 		[DataMember]
 		public IEnumerable<ChatMessage> Messages

@@ -21,13 +21,22 @@ namespace ZenChatService.ServiceClasses
 		#region User
 
 		/// <summary>
-		/// Ändert den Username eines Users.
+		///     Ändert den Username eines Users.
 		/// </summary>
 		/// <param name="userId">User</param>
 		/// <param name="newUsername">Neuer Username</param>
 		/// <returns></returns>
 		[OperationContract]
 		User ChangeUsername(int userId, string newUsername);
+
+		/// <summary>
+		///     Ändert die Telefonnummer eines Users.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="newPhoneNumber">Neue Telefonnummer</param>
+		/// <returns></returns>
+		[OperationContract]
+		User ChangePhoneNumber(int userId, string newPhoneNumber);
 
 		/// <summary>
 		///     Ladet den User anhand seiner Telefonnummer

@@ -100,7 +100,7 @@ namespace ZenChatService.ServiceClasses
 		public IEnumerable<User> Members { get; private set; }
 
 		/// <summary>
-		/// True, falls er immernoch Mitglied ist. False, falls er ein Mitglied war.
+		///     True, falls er immernoch Mitglied ist. False, falls er ein Mitglied war.
 		/// </summary>
 		[DataMember]
 		public bool CanWriteMessages { get; private set; }

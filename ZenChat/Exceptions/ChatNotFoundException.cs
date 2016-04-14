@@ -6,13 +6,12 @@ using System;
 namespace ZenChatService.Exceptions
 {
 	/// <summary>
-	/// Chatraum konnte nicht gefunden werden.
+	///     Chatraum konnte nicht gefunden werden.
 	/// </summary>
 	[Serializable]
 	public class ChatNotFoundException : Exception
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public ChatNotFoundException() : base("Der gewünschte Chatraum konnte nicht gefunden werden")
 		{

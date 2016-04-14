@@ -31,8 +31,6 @@ namespace ZenChatServiceTest
 			_temporaryUsers.Clear();
 		}
 
-		#region TemporaryData
-
 		private readonly List<User> _temporaryUsers = new List<User>();
 
 
@@ -96,99 +94,30 @@ namespace ZenChatServiceTest
 				const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 				var random = new Random();
 				return new string(Enumerable.Repeat(chars, 50)
-				  .Select(s => s[random.Next(s.Length)]).ToArray());
+					.Select(s => s[random.Next(s.Length)]).ToArray());
 			}
 		}
 
-		#endregion
-
-		#region User
-
 		[Test]
-		public void TestLoginReturnsSameUserEveryTime()
+		public void TestCreatedChatRoomContainsMember()
 		{
 			//Arrange
-			const string username = "TestUsername";
-			var phone = RandomString;
+			var user = TemporaryUser;
+			const string topic = "ExampleTopic";
 
 			//Act
-			var result = UnitUnderTest.Login(phone, username);
-			var result2 = UnitUnderTest.Login(phone, username);
+			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
 
 			//Assert
-			Assert.That(result.Item2.Name, Is.EqualTo(username));
-			Assert.That(result.Item2.PhoneNumber, Is.EqualTo(phone));
-			Assert.That(result.Item2, Is.EqualTo(result2.Item2));
-			Assert.That(result.Item1, Is.EqualTo(result2.Item1));
+			Assert.That(createdChat.Admin, Is.EqualTo(user));
+			Assert.That(createdChat.CanWriteMessages);
+			Assert.That(createdChat.Members, Contains.Item(user));
+			Assert.That(createdChat.Topic, Is.EqualTo(topic));
+			Assert.That(createdChat.Messages, Is.Empty);
 
 			//Cleanup
-			DeleteUser(result.Item1);
+			DeleteChat(createdChat.Id);
 		}
-
-		[Test]
-		public void TestGetUserReturnsExistingUser()
-		{
-			//Arrange
-			const string username = "TestUsername";
-			var phone = RandomString;
-
-			//Act
-			var result = UnitUnderTest.Login(phone, username);
-			var result2 = UnitUnderTest.GetUser(phone);
-
-			//Assert
-			Assert.That(result.Item2.Name, Is.EqualTo(username));
-			Assert.That(result.Item2.PhoneNumber, Is.EqualTo(phone));
-			Assert.That(result.Item2, Is.EqualTo(result2));
-			Assert.That(result.Item1, Is.EqualTo(result2.Id));
-
-			//Cleanup
-			DeleteUser(result.Item1);
-		}
-
-		[Test]
-		public void TestGetUserThrowsExceptionIfWrongUser()
-		{
-			//Arrange
-			const string phone = "This Phone Number will never exist!";
-
-			//Act & Assert
-			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUser(phone));
-		}
-
-		[Test]
-		public void TestGetUserFromIdReturnsExistingUser()
-		{
-			//Arrange
-			const string username = "TestUsername";
-			var phone = RandomString;
-
-			//Act
-			var result = UnitUnderTest.Login(phone, username);
-			var result2 = UnitUnderTest.GetUserFromId(result.Item1);
-
-			//Assert
-			Assert.That(result.Item2.Name, Is.EqualTo(username));
-			Assert.That(result.Item2.PhoneNumber, Is.EqualTo(phone));
-			Assert.That(result.Item2, Is.EqualTo(result2));
-			Assert.That(result.Item1, Is.EqualTo(result2.Id));
-
-			//Cleanup
-			DeleteUser(result.Item1);
-		}
-
-		[Test]
-		public void TestGetUserFromIdThrowsExceptionIfWrongUser()
-		{
-			//Arrange
-			const int id = 1;
-
-			//Act & Assert
-			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUserFromId(id));
-		}
-		#endregion
-
-		#region Chatraum
 
 		[Test]
 		public void TestGetAllChatRoomsReturnsAllChatrooms()
@@ -249,24 +178,65 @@ namespace ZenChatServiceTest
 		}
 
 		[Test]
-		public void TestCreatedChatRoomContainsMember()
+		public void TestGetUserFromIdReturnsExistingUser()
 		{
 			//Arrange
-			var user = TemporaryUser;
-			const string topic = "ExampleTopic";
+			const string username = "TestUsername";
+			var phone = RandomString;
 
 			//Act
-			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
+			var result = UnitUnderTest.Login(phone, username);
+			var result2 = UnitUnderTest.GetUserFromId(result.Item1);
 
 			//Assert
-			Assert.That(createdChat.Admin, Is.EqualTo(user));
-			Assert.That(createdChat.CanWriteMessages);
-			Assert.That(createdChat.Members, Contains.Item(user));
-			Assert.That(createdChat.Topic, Is.EqualTo(topic));
-			Assert.That(createdChat.Messages, Is.Empty);
+			Assert.That(result.Item2.Name, Is.EqualTo(username));
+			Assert.That(result.Item2.PhoneNumber, Is.EqualTo(phone));
+			Assert.That(result.Item2, Is.EqualTo(result2));
+			Assert.That(result.Item1, Is.EqualTo(result2.Id));
 
 			//Cleanup
-			DeleteChat(createdChat.Id);
+			DeleteUser(result.Item1);
+		}
+
+		[Test]
+		public void TestGetUserFromIdThrowsExceptionIfWrongUser()
+		{
+			//Arrange
+			const int id = 1;
+
+			//Act & Assert
+			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUserFromId(id));
+		}
+
+		[Test]
+		public void TestGetUserReturnsExistingUser()
+		{
+			//Arrange
+			const string username = "TestUsername";
+			var phone = RandomString;
+
+			//Act
+			var result = UnitUnderTest.Login(phone, username);
+			var result2 = UnitUnderTest.GetUser(phone);
+
+			//Assert
+			Assert.That(result.Item2.Name, Is.EqualTo(username));
+			Assert.That(result.Item2.PhoneNumber, Is.EqualTo(phone));
+			Assert.That(result.Item2, Is.EqualTo(result2));
+			Assert.That(result.Item1, Is.EqualTo(result2.Id));
+
+			//Cleanup
+			DeleteUser(result.Item1);
+		}
+
+		[Test]
+		public void TestGetUserThrowsExceptionIfWrongUser()
+		{
+			//Arrange
+			const string phone = "This Phone Number will never exist!";
+
+			//Act & Assert
+			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUser(phone));
 		}
 
 		/*
@@ -307,6 +277,27 @@ namespace ZenChatServiceTest
 			DeleteChat(createdChat.Id);
 		}
 
+		[Test]
+		public void TestLoginReturnsSameUserEveryTime()
+		{
+			//Arrange
+			const string username = "TestUsername";
+			var phone = RandomString;
+
+			//Act
+			var result = UnitUnderTest.Login(phone, username);
+			var result2 = UnitUnderTest.Login(phone, username);
+
+			//Assert
+			Assert.That(result.Item2.Name, Is.EqualTo(username));
+			Assert.That(result.Item2.PhoneNumber, Is.EqualTo(phone));
+			Assert.That(result.Item2, Is.EqualTo(result2.Item2));
+			Assert.That(result.Item1, Is.EqualTo(result2.Item1));
+
+			//Cleanup
+			DeleteUser(result.Item1);
+		}
+
 		/*
 		void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId);
 
@@ -314,6 +305,5 @@ namespace ZenChatServiceTest
 
 		ChatRoom WriteGroupChatMessage(int userId, int chatRoomId, string message);
 		*/
-		#endregion
 	}
 }

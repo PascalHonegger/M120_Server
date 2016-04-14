@@ -6,13 +6,12 @@ using System;
 namespace ZenChatService.Exceptions
 {
 	/// <summary>
-	/// Chatraum konnte nicht gefunden werden.
+	///     Chatraum konnte nicht gefunden werden.
 	/// </summary>
 	[Serializable]
 	public class NoPermissionException : Exception
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public NoPermissionException() : base("Zu wenig Rechte für die gewünschte Aktion!")
 		{

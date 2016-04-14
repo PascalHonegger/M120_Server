@@ -1,7 +1,6 @@
 // Copyright (c) 2016 Pascal Honegger
 // All rights reserved.
 
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
