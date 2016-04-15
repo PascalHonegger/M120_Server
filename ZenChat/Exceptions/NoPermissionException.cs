@@ -9,11 +9,11 @@ namespace ZenChatService.Exceptions
 	///     Chatraum konnte nicht gefunden werden.
 	/// </summary>
 	[Serializable]
-	public class ChatNotFoundException : Exception
+	public class NoPermissionException : Exception
 	{
 		/// <summary>
 		/// </summary>
-		public ChatNotFoundException() : base("Der gewünschte Chatraum konnte nicht gefunden werden")
+		public NoPermissionException() : base("Zu wenig Rechte für die gewünschte Aktion!")
 		{
 		}
 	}

@@ -6,13 +6,12 @@ using System;
 namespace ZenChatService.Exceptions
 {
 	/// <summary>
-	/// Chatraum konnte nicht gefunden werden.
+	///     Chatraum konnte nicht gefunden werden.
 	/// </summary>
 	[Serializable]
 	public class MemberNotFoundException : Exception
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public MemberNotFoundException() : base("Der gewünschte Spieler war nie Mitglied dieses Chats!")
 		{

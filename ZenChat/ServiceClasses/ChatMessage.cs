@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace ZenChatService.ServiceClasses
 {
 	/// <summary>
-	/// Eine Chatnachricht. Ist generisch für Private und Gruppennachrichten.
+	///     Eine Chatnachricht. Ist generisch für Private und Gruppennachrichten.
 	/// </summary>
 	[DataContract]
 	public class ChatMessage
@@ -23,52 +23,40 @@ namespace ZenChatService.ServiceClasses
 		}
 
 		/// <summary>
-		/// ID dieser Nachricht.
+		///     ID dieser Nachricht.
 		/// </summary>
 		[DataMember]
 		public int Id { get; }
 
 		/// <summary>
-		/// Der Author dieser Nachricht.
+		///     Der Author dieser Nachricht.
 		/// </summary>
 		[DataMember]
 		public User Author { get; }
 
 		/// <summary>
-		/// Die eigentliche Nachricht. 
+		///     Die eigentliche Nachricht.
 		/// </summary>
 		[DataMember]
 		public string Message { get; }
 
 		/// <summary>
-		/// Das Datum, an welchem diese Nachricht gesendet / erstellt wurde.
+		///     Das Datum, an welchem diese Nachricht gesendet / erstellt wurde.
 		/// </summary>
 		[DataMember]
 		public DateTime Created { get; }
 
 		/// <summary>
-		/// Die Liste der User, bei welcher diese Nachricht angekommen ist.
+		///     Die Liste der User, bei welcher diese Nachricht angekommen ist.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> ArrivedAt
-		{
-			get
-			{
-				return new List<User>();
-			}
-		}
+		public IEnumerable<User> ArrivedAt => new List<User>();
 
 		/// <summary>
-		/// Die Liste der User, welche diese Nachricht gelesen haben.
+		///     Die Liste der User, welche diese Nachricht gelesen haben.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> ReadBy
-		{
-			get
-			{
-				return new List<User>();
-			}
-		}
+		public IEnumerable<User> ReadBy => new List<User>();
 
 		private bool Equals(ChatMessage other) => Equals(Id, other.Id);
 

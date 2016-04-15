@@ -9,11 +9,11 @@ namespace ZenChatService.Exceptions
 	///     Chatraum konnte nicht gefunden werden.
 	/// </summary>
 	[Serializable]
-	public class ChatNotFoundException : Exception
+	public class PhoneNumberAlreadyExistsException : Exception
 	{
 		/// <summary>
 		/// </summary>
-		public ChatNotFoundException() : base("Der gewünschte Chatraum konnte nicht gefunden werden")
+		public PhoneNumberAlreadyExistsException() : base("Es existiert bereits ein Account mit dieser Telefonnummer!")
 		{
 		}
 	}

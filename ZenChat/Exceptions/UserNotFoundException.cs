@@ -6,13 +6,12 @@ using System;
 namespace ZenChatService.Exceptions
 {
 	/// <summary>
-	/// Der Benutzer konnte nicht gefunden werden.
+	///     Der Benutzer konnte nicht gefunden werden.
 	/// </summary>
 	[Serializable]
 	public class UserNotFoundException : Exception
 	{
 		/// <summary>
-		/// 
 		/// </summary>
 		public UserNotFoundException() : base("Der gewünschte Benutzer konnte nicht gefunden werden")
 		{

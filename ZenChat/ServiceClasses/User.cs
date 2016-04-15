@@ -1,7 +1,6 @@
 // Copyright (c) 2016 Pascal Honegger
 // All rights reserved.
 
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -49,10 +48,7 @@ namespace ZenChatService.ServiceClasses
 		/// <summary>
 		///     Alle Freunde des Users
 		/// </summary>
-		public IEnumerable<User> Friends
-		{
-			get { return new List<User>(); }
-		}
+		public IEnumerable<User> Friends => new List<User>();
 
 		/// <summary>
 		///     Lädt alle Daten des Users nach.

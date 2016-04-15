@@ -12,12 +12,17 @@ namespace ZenChatServiceTest
 		public void SetUp()
 		{
 			UnitUnderTest = new T();
+			DoOnSetUp();
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
+			DoOnTearDown();
 		}
+
+		protected abstract void DoOnSetUp();
+		protected abstract void DoOnTearDown();
 
 		protected T UnitUnderTest;
 	}

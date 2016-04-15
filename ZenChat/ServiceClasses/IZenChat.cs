@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Security;
 using System.ServiceModel;
 
 namespace ZenChatService.ServiceClasses
@@ -11,19 +12,31 @@ namespace ZenChatService.ServiceClasses
 	///     Interface für den allgemeinen ZenChat
 	/// </summary>
 	[ServiceContract(
-		Namespace = "http://zenchatservice.azurewebsites.net/ZenChat.svc")]
+		Namespace = "http://zenchatservice.azurewebsites.net/ZenChat.svc",
+		SessionMode = SessionMode.NotAllowed,
+		ProtectionLevel = ProtectionLevel.None,
+		Name = "ZenChatService")]
 	public interface IZenChat
 	{
 		#region User
 
 		/// <summary>
-		/// Ändert den Username eines Users.
+		///     Ändert den Username eines Users.
 		/// </summary>
 		/// <param name="userId">User</param>
 		/// <param name="newUsername">Neuer Username</param>
 		/// <returns></returns>
 		[OperationContract]
 		User ChangeUsername(int userId, string newUsername);
+
+		/// <summary>
+		///     Ändert die Telefonnummer eines Users.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="newPhoneNumber">Neue Telefonnummer</param>
+		/// <returns></returns>
+		[OperationContract]
+		User ChangePhoneNumber(int userId, string newPhoneNumber);
 
 		/// <summary>
 		///     Ladet den User anhand seiner Telefonnummer
@@ -113,11 +126,20 @@ namespace ZenChatService.ServiceClasses
 		/// <summary>
 		///     Lädt einen Freund zu einem chat ein
 		/// </summary>
-		/// <param name="userId">Der jetzige Use</param>
+		/// <param name="userId">Der jetzige User</param>
 		/// <param name="phoneNumber">Einzuladender</param>
 		/// <param name="chatRoomId">Beizutretender Chat</param>
 		[OperationContract]
 		void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId);
+
+		/// <summary>
+		///     Lädt einen Freund zu einem chat ein
+		/// </summary>
+		/// <param name="userId">Der jetzige User</param>
+		/// <param name="phoneNumber">Einzuladender</param>
+		/// <param name="chatRoomId">Beizutretender Chat</param>
+		[OperationContract]
+		void RemoveFromChatRoom(int userId, string phoneNumber, int chatRoomId);
 
 		/// <summary>
 		///     Schriebt eine Chat-Message in den mitgegebenen Chat

@@ -19,7 +19,7 @@ namespace ZenChatService
 		#region User
 
 		/// <summary>
-		/// Ändert den Username eines Users.
+		///     Ändert den Username eines Users.
 		/// </summary>
 		/// <param name="userId">User</param>
 		/// <param name="newUsername">Neuer Username</param>
@@ -37,6 +37,43 @@ namespace ZenChatService
 
 				command.Parameters["@id"].Value = userId;
 				command.Parameters["@user"].Value = newUsername;
+
+				command.ExecuteNonQuery();
+
+				return GetUserFromId(userId);
+			}
+		}
+
+		/// <summary>
+		///     Ändert die Telefonnummer eines Users.
+		/// </summary>
+		/// <param name="userId">User</param>
+		/// <param name="newPhoneNumber">Neue Telefonnummer</param>
+		/// <returns></returns>
+		public User ChangePhoneNumber(int userId, string newPhoneNumber)
+		{
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("SELECT id_user from [user] where phone = @phone", connection);
+
+				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@phone", SqlDbType.NVarChar));
+
+				command.Parameters["@id"].Value = userId;
+				command.Parameters["@phone"].Value = newPhoneNumber;
+
+				var reader = command.ExecuteReader();
+
+				if (reader.Read())
+				{
+					throw new PhoneNumberAlreadyExistsException();
+				}
+
+				reader.Close();
+
+				command.CommandText = "UPDATE [user] SET phone=@phone WHERE id_user = @id";
 
 				command.ExecuteNonQuery();
 
@@ -220,8 +257,9 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("INSERT INTO [chatroom] (admin, topic) OUTPUT INSERTED.id_chatroom VALUES(@user, @topic)",
-					connection);
+				var command =
+					new SqlCommand("INSERT INTO [chatroom] (admin, topic) OUTPUT INSERTED.id_chatroom VALUES(@user, @topic)",
+						connection);
 
 				command.Parameters.Add(new SqlParameter("@user", SqlDbType.NVarChar));
 				command.Parameters.Add(new SqlParameter("@topic", SqlDbType.NVarChar));
@@ -229,9 +267,10 @@ namespace ZenChatService
 				command.Parameters["@user"].Value = userId;
 				command.Parameters["@topic"].Value = topic;
 
-				var chatId = (int)command.ExecuteScalar();
+				var chatId = (int) command.ExecuteScalar();
 
-				command = new SqlCommand("INSERT INTO [chatroom_user] (fk_user, fk_chatroom) VALUES(@userId, @chatroomId)", connection);
+				command = new SqlCommand("INSERT INTO [chatroom_user] (fk_user, fk_chatroom) VALUES(@userId, @chatroomId)",
+					connection);
 
 				command.Parameters.Add(new SqlParameter("@userId", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@chatroomId", SqlDbType.Int));
@@ -248,10 +287,21 @@ namespace ZenChatService
 		/// <summary>
 		///     Lädt einen Freund zu einem chat ein
 		/// </summary>
-		/// <param name="userId">Der jetzige Use</param>
+		/// <param name="userId">Der jetzige User</param>
 		/// <param name="phoneNumber">Einzuladender</param>
 		/// <param name="chatRoomId">Beizutretender Chat</param>
 		public void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		///     Lädt einen Freund zu einem chat ein
+		/// </summary>
+		/// <param name="userId">Der jetzige User</param>
+		/// <param name="phoneNumber">Einzuladender</param>
+		/// <param name="chatRoomId">Beizutretender Chat</param>
+		public void RemoveFromChatRoom(int userId, string phoneNumber, int chatRoomId)
 		{
 			throw new NotImplementedException();
 		}
