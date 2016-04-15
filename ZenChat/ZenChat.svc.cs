@@ -105,10 +105,9 @@ namespace ZenChatService
 					var id = reader.GetInt32(0);
 					return new User(id);
 				}
-
-
-				throw new UserNotFoundException();
 			}
+
+			throw new UserNotFoundException();
 		}
 
 		/// <summary>
@@ -189,7 +188,22 @@ namespace ZenChatService
 		/// <param name="otherPhone">Hinzuzufügender Freund</param>
 		public void AddFriend(int userId, string otherPhone)
 		{
-			throw new NotImplementedException();
+			var other = GetUser(otherPhone);
+
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("INSERT INTO [friendship] (fk_user1, fk_user2) VALUES (@id, @id2)", connection);
+
+				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@id2", SqlDbType.Int));
+
+				command.Parameters["@id"].Value = userId;
+				command.Parameters["@id2"].Value = other.Id;
+
+				command.ExecuteNonQuery();
+			}
 		}
 
 		/// <summary>
@@ -199,7 +213,22 @@ namespace ZenChatService
 		/// <param name="otherPhone">Zu entfernender Freund</param>
 		public void RemoveFriend(int userId, string otherPhone)
 		{
-			throw new NotImplementedException();
+			var other = GetUser(otherPhone);
+
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("DELETE FROM [friendship] WHERE (fk_user1 = @id AND fk_user2 = @id2) OR (fk_user1 = @id2 AND fk_user2 = @id)", connection);
+
+				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@id2", SqlDbType.Int));
+
+				command.Parameters["@id"].Value = userId;
+				command.Parameters["@id2"].Value = other.Id;
+
+				command.ExecuteNonQuery();
+			}
 		}
 
 		#endregion

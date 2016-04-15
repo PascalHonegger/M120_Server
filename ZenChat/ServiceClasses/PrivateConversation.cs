@@ -75,7 +75,7 @@ namespace ZenChatService.ServiceClasses
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			return obj.GetType() == this.GetType() && Equals((PrivateConversation) obj);
+			return obj.GetType() == GetType() && Equals((PrivateConversation) obj);
 		}
 
 		/// <summary>Fungiert als die Standardhashfunktion. </summary>

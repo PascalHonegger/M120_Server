@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.Serialization;
 using ZenChatService.Exceptions;
 using ZenChatService.Properties;
@@ -48,7 +49,44 @@ namespace ZenChatService.ServiceClasses
 		/// <summary>
 		///     Alle Freunde des Users
 		/// </summary>
-		public IEnumerable<User> Friends => new List<User>();
+		public IEnumerable<User> Friends
+		{
+			get
+			{
+				var friendIds = new List<int>();
+
+				using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+				{
+					connection.Open();
+
+					var command = new SqlCommand("SELECT fk_user1 FROM [friendship] WHERE fk_user2 = @id", connection);
+
+					command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+
+					command.Parameters["@id"].Value = Id;
+
+					var reader = command.ExecuteReader();
+
+					while (reader.Read())
+					{
+						friendIds.Add(reader.GetInt32(0));
+					}
+
+					reader.Close();
+
+					command.CommandText = "SELECT fk_user2 FROM [friendship] WHERE fk_user1 = @id";
+
+					reader = command.ExecuteReader();
+
+					while (reader.Read())
+					{
+						friendIds.Add(reader.GetInt32(0));
+					}
+				}
+
+				return friendIds.Select(id => new User(id));
+			}
+		}
 
 		/// <summary>
 		///     Lädt alle Daten des Users nach.

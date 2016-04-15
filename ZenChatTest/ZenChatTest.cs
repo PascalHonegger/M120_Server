@@ -77,11 +77,17 @@ namespace ZenChatServiceTest
 			{
 				connection.Open();
 
-				var command = new SqlCommand("DELETE FROM [user] WHERE id_user = @id", connection);
+				//Delete Friends
+				var command = new SqlCommand("DELETE FROM [friendship] WHERE fk_user1 = @id OR fk_user2 = @id", connection);
 
 				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
 
 				command.Parameters["@id"].Value = id;
+
+				command.ExecuteNonQuery();
+
+				//Delete User
+				command.CommandText = "DELETE FROM [user] WHERE id_user = @id";
 
 				command.ExecuteNonQuery();
 			}
@@ -285,6 +291,7 @@ namespace ZenChatServiceTest
 		}
 		*/
 
+		//TODO
 		[Test, Ignore("TODO PHO")]
 		public void TestInviteToChatRoomAddsMember()
 		{
@@ -330,12 +337,59 @@ namespace ZenChatServiceTest
 			DeleteUser(result.Item1);
 		}
 
-		/*
-		void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId);
+		[Test]
+		public void TestNewUserHasNoFriends()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
 
-		void RemoveFromChatRoom(int userId, string phoneNumber, int chatRoomId);
+			//Act
+			var friends = UnitUnderTest.GetFriends(randomUser.Id).ToList();
 
-		ChatRoom WriteGroupChatMessage(int userId, int chatRoomId, string message);
-		*/
+			//Assert
+			Assert.That(friends, Is.Empty);
+			Assert.That(friends, Is.EqualTo(randomUser.Friends));
+
+			//Cleanup
+			DeleteUser(randomUser.Id);
+		}
+
+		[Test]
+		public void TestAddFriendsAddsFriend()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var otherUser = TemporaryUser;
+
+			//Act
+			UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber);
+
+			//Assert
+			Assert.That(randomUser.Friends, Is.Not.Empty);
+			Assert.That(randomUser.Friends, Contains.Item(otherUser));
+		}
+
+		[Test]
+		public void TestRemoveFriendsRemovesFriend()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var friend1 = TemporaryUser;
+			var friend2 = TemporaryUser;
+			var friend3 = TemporaryUser;
+
+			UnitUnderTest.AddFriend(randomUser.Id, friend1.PhoneNumber);
+			UnitUnderTest.AddFriend(randomUser.Id, friend2.PhoneNumber);
+			UnitUnderTest.AddFriend(randomUser.Id, friend3.PhoneNumber);
+
+			//Act
+			UnitUnderTest.RemoveFriend(randomUser.Id, friend2.PhoneNumber);
+
+			//Assert
+			Assert.That(randomUser.Friends, Is.Not.Empty);
+			Assert.That(randomUser.Friends, Contains.Item(friend1));
+			Assert.That(randomUser.Friends, !Contains.Item(friend2));
+			Assert.That(randomUser.Friends, Contains.Item(friend3));
+		}
 	}
 }
