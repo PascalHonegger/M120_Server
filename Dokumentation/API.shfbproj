@@ -21,9 +21,9 @@
       <DocumentationSource sourceFile="..\ZenChat\ZenChatService.csproj" />
     </DocumentationSources>
     <BuildAssemblerVerbosity>OnlyErrors</BuildAssemblerVerbosity>
-    <HelpFileFormat>Website</HelpFileFormat>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <IndentHtml>False</IndentHtml>
-    <KeepLogFile>True</KeepLogFile>
+    <KeepLogFile>False</KeepLogFile>
     <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
     <CleanIntermediates>True</CleanIntermediates>
     <HelpFileVersion>1.0.0.0</HelpFileVersion>
@@ -39,13 +39,21 @@
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="True">ZenChat</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ZenChat" isDocumented="True">ZenChat</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ZenChat.Exceptions" isDocumented="True">Alle Custom-Exceptions</NamespaceSummaryItem>
-<NamespaceSummaryItem name="ZenChat.ServiceClasses" isDocumented="True">Klassen, welche über den Service gesendet werden.</NamespaceSummaryItem></NamespaceSummaries>
+<NamespaceSummaryItem name="ZenChatService" isDocumented="True">Service für den ZenChat.</NamespaceSummaryItem>
+<NamespaceSummaryItem name="ZenChatService.Exceptions" isDocumented="True">Alle Custom-Exceptions</NamespaceSummaryItem>
+<NamespaceSummaryItem name="ZenChatService.ServiceClasses" isDocumented="True">Klassen, welche über den Service gesendet werden.</NamespaceSummaryItem></NamespaceSummaries>
     <CopyrightText>MIT-Licence</CopyrightText>
     <ProjectSummary>ZenChat von Alain, Seraphin und Pascal!</ProjectSummary>
     <RootNamespaceTitle>ZenChat</RootNamespaceTitle>
     <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, ProtectedInternalAsProtected</VisibleItems>
+    <TocParentId>-1</TocParentId>
+    <TocParentVersion>100</TocParentVersion>
+    <TopicVersion>100</TopicVersion>
+    <TocOrder>-1</TocOrder>
+    <ProductTitle>ZenChat</ProductTitle>
+    <MSHelpViewerSdkLinkType>Msdn</MSHelpViewerSdkLinkType>
+    <CatalogVersion>100</CatalogVersion>
+    <CatalogProductId>VS</CatalogProductId>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->
