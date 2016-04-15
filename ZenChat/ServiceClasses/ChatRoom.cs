@@ -74,7 +74,7 @@ namespace ZenChatService.ServiceClasses
 
 					var command =
 						new SqlCommand(
-							"SELECT id_message_user FROM [message_user] where fk_chatroom = @chatroomId and fk_user = @userId", connection);
+							"SELECT fk_message FROM [message_user] where fk_chatroom = @chatroomId and fk_user = @userId", connection);
 
 					command.Parameters.Add(new SqlParameter("@chatroomId", SqlDbType.Int));
 					command.Parameters.Add(new SqlParameter("@userId", SqlDbType.Int));

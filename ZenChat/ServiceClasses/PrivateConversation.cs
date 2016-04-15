@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Runtime.Serialization;
 using ZenChatService.Properties;
 
@@ -37,20 +38,33 @@ namespace ZenChatService.ServiceClasses
 				{
 					connection.Open();
 
-					//TODO: Laden der Nachrichten
-					var command = new SqlCommand("SELECT id_message_user FROM [message_user] WHERE fk_user = @userId", connection);
+					//Load received Messages
+					var command = new SqlCommand("SELECT fk_message FROM [message_user] WHERE fk_user = @user1", connection);
 
 					command.Parameters.Add(new SqlParameter("@user1", SqlDbType.Int));
 					command.Parameters.Add(new SqlParameter("@user2", SqlDbType.Int));
 
-					command.Parameters["@userID"].Value = null;
+					command.Parameters["@user1"].Value = Members.First().Id;
+					command.Parameters["@user2"].Value = Members.Last().Id;
 
 					var reader = command.ExecuteReader();
 
 					while (reader.Read())
 					{
-						var idMessageUser = reader.GetInt32(0);
-						yield return new ChatMessage(idMessageUser);
+						var idMessage = reader.GetInt32(0);
+						yield return new ChatMessage(idMessage);
+					}
+					reader.Close();
+
+					//Load Sent Messages
+					command.CommandText = "SELECT fk_message FROM [message_user] WHERE fk_user = @user2";
+
+					reader = command.ExecuteReader();
+
+					while (reader.Read())
+					{
+						var idMessage = reader.GetInt32(0);
+						yield return new ChatMessage(idMessage);
 					}
 				}
 			}

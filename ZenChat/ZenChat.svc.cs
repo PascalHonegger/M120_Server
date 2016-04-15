@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using ZenChatService.Exceptions;
 using ZenChatService.Properties;
 using ZenChatService.ServiceClasses;
@@ -190,6 +191,11 @@ namespace ZenChatService
 		{
 			var other = GetUser(otherPhone);
 
+			if (GetFriends(userId).Select(v => v.PhoneNumber).Contains(otherPhone))
+			{
+				throw new AlreadyFriendException();
+			}
+
 			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
 			{
 				connection.Open();
@@ -374,7 +380,36 @@ namespace ZenChatService
 		/// <returns></returns>
 		public PrivateConversation WritePrivateChatMessage(int userId, string otherPhone, string message)
 		{
-			throw new NotImplementedException();
+			var other = GetUser(otherPhone);
+
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("INSERT INTO [message] (author, message) OUTPUT INSERTED.id_message VALUES(@user, @message)", connection);
+
+				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@message", SqlDbType.VarChar));
+
+				command.Parameters["@user"].Value = userId;
+				command.Parameters["@message"].Value = message;
+
+				command.ExecuteNonQuery();
+
+				var messageId = (int)command.ExecuteScalar();
+
+				command.CommandText = "INSERT INTO [message_user] (fk_message, fk_user) VALUES (@idMessage, @other)";
+
+				command.Parameters.Add(new SqlParameter("@idMessage", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@other", SqlDbType.Int));
+
+				command.Parameters["@idMessage"].Value = messageId;
+				command.Parameters["@other"].Value = other.Id;
+
+				command.ExecuteNonQuery();
+
+				return GetPrivateConversation(userId, otherPhone);
+			}
 		}
 
 		#endregion

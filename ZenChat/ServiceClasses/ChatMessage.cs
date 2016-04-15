@@ -3,7 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Runtime.Serialization;
+using ZenChatService.Properties;
 
 namespace ZenChatService.ServiceClasses
 {
@@ -16,10 +19,59 @@ namespace ZenChatService.ServiceClasses
 		/// <summary>
 		///     Lädt eine Chatmessage.
 		/// </summary>
-		/// <param name="idMessageUser">ID_Message_User</param>
-		public ChatMessage(int idMessageUser)
+		/// <param name="idMessage">ID_Message_User</param>
+		public ChatMessage(int idMessage)
 		{
-			throw new NotImplementedException();
+			Id = idMessage;
+
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				//General Settings
+				var command = new SqlCommand("SELECT author, message, created FROM [message] WHERE id_message = @messageId", connection);
+
+				command.Parameters.Add(new SqlParameter("@messageId", SqlDbType.Int));
+
+				command.Parameters["@messageId"].Value = idMessage;
+
+				var reader = command.ExecuteReader();
+
+				if (reader.Read())
+				{
+					Author = new User(reader.GetInt32(0));
+					Message = reader.GetString(1);
+					Created = reader.GetDateTime(2);
+				}
+
+				reader.Close();
+
+				//SentTo, ReadBy, ArrivedAt
+				command.CommandText = "SELECT fk_user, wasRead, wasReceived FROM message_user WHERE fk_message = @messageId";
+
+				reader = command.ExecuteReader();
+
+				var sentTo = new List<User>();
+				var readBy = new List<User>();
+				var receivedBy = new List<User>();
+
+				while (reader.Read())
+				{
+					var target = new User(reader.GetInt32(0));
+					sentTo.Add(target);
+					if (reader.GetBoolean(1))
+					{
+						readBy.Add(target);
+					}
+					if (reader.GetBoolean(2))
+					{
+						receivedBy.Add(target);
+					}
+				}
+				SentTo = sentTo;
+				ReadBy = readBy;
+				ArrivedAt = receivedBy;
+			}
 		}
 
 		/// <summary>
@@ -50,13 +102,19 @@ namespace ZenChatService.ServiceClasses
 		///     Die Liste der User, bei welcher diese Nachricht angekommen ist.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> ArrivedAt => new List<User>();
+		public IEnumerable<User> ArrivedAt { get; private set; }
 
 		/// <summary>
 		///     Die Liste der User, welche diese Nachricht gelesen haben.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> ReadBy => new List<User>();
+		public IEnumerable<User> ReadBy { get; private set; }
+
+		/// <summary>
+		///     Die Liste der User, an welche diese Nachricht gesendet wurde.
+		/// </summary>
+		[DataMember]
+		public IEnumerable<User> SentTo { get; private set; }
 
 		private bool Equals(ChatMessage other) => Equals(Id, other.Id);
 

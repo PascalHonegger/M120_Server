@@ -86,6 +86,49 @@ namespace ZenChatServiceTest
 
 				command.ExecuteNonQuery();
 
+				//Get own Messages
+				command.CommandText = "SELECT id_message FROM [message] WHERE author = @id";
+
+				var reader = command.ExecuteReader();
+
+				var messages = new List<int>();
+
+				while (reader.Read())
+				{
+					messages.Add(reader.GetInt32(0));
+				}
+
+				reader.Close();
+
+				command.Parameters.Add(new SqlParameter("@message", SqlDbType.Int));
+
+				//Delete own Messages
+				foreach (var message in messages)
+				{
+					command.Parameters["@message"].Value = message;
+
+					//Delete sent messages
+					command.CommandText = "DELETE FROM [message_user] WHERE fk_message = @message";
+
+					command.ExecuteNonQuery();
+
+					//Delete message
+					command.CommandText = "DELETE FROM [message] WHERE id_message = @message";
+
+					command.ExecuteNonQuery();
+				}
+
+				command.Parameters.Clear();
+
+				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
+
+				command.Parameters["@id"].Value = id;
+
+				//Delete received messages
+				command.CommandText = "DELETE FROM message_user WHERE fk_user = @id";
+
+				command.ExecuteNonQuery();
+
 				//Delete User
 				command.CommandText = "DELETE FROM [user] WHERE id_user = @id";
 
@@ -390,6 +433,46 @@ namespace ZenChatServiceTest
 			Assert.That(randomUser.Friends, Contains.Item(friend1));
 			Assert.That(randomUser.Friends, !Contains.Item(friend2));
 			Assert.That(randomUser.Friends, Contains.Item(friend3));
+		}
+
+		[Test]
+		public void TestGetPrivateConversationWithNewFriendIsEmpty()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var friend = TemporaryUser;
+
+			UnitUnderTest.AddFriend(randomUser.Id, friend.PhoneNumber);
+
+			//Act
+			var conversation = UnitUnderTest.GetPrivateConversation(randomUser.Id, friend.PhoneNumber);
+
+			//Assert
+			Assert.That(conversation.Messages, Is.Empty);
+			Assert.That(conversation.Members, Contains.Item(randomUser).And.Contains(friend));
+		}
+
+		[Test]
+		public void TestWritePrivateMessageAddsMessage()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var friend = TemporaryUser;
+			const string message = "Hallo Welt";
+
+			UnitUnderTest.AddFriend(randomUser.Id, friend.PhoneNumber);
+
+			//Act
+			var conversation = UnitUnderTest.WritePrivateChatMessage(randomUser.Id, friend.PhoneNumber, message);
+
+			//Assert
+			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
+			var msg = conversation.Messages.First();
+			Assert.That(msg.Message, Is.EqualTo(message));
+			Assert.That(msg.SentTo, Contains.Item(friend));
+			Assert.That(msg.Author, Is.EqualTo(randomUser));
+			Assert.That(msg.ReadBy, Is.Empty);
+			Assert.That(msg.ArrivedAt, Is.Empty);
 		}
 	}
 }
