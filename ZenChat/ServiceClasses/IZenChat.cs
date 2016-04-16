@@ -142,7 +142,7 @@ namespace ZenChatService.ServiceClasses
 		void RemoveFromChatRoom(int userId, string phoneNumber, int chatRoomId);
 
 		/// <summary>
-		///     Schriebt eine Chat-Message in den mitgegebenen Chat
+		///     Schreibt eine Chat-Message in den mitgegebenen Chat
 		/// </summary>
 		/// <param name="userId">Autor</param>
 		/// <param name="chatRoomId">Chat</param>

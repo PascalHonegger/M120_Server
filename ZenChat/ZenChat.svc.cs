@@ -327,7 +327,34 @@ namespace ZenChatService
 		/// <param name="chatRoomId">Beizutretender Chat</param>
 		public void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId)
 		{
-			throw new NotImplementedException();
+			var chatroom = GetChatRoom(chatRoomId, userId);
+
+			if (!Equals(chatroom.Admin.Id, userId))
+			{
+				throw new NoPermissionException();
+			}
+
+			if (chatroom.Members.Select(f => f.PhoneNumber).Contains(phoneNumber))
+			{
+				throw new AlreadyMemberException();
+			}
+
+			var other = GetUser(phoneNumber);
+
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("INSERT INTO [chatroom_user](fk_user, fk_chatroom) VALUES (@user, @chat)", connection);
+
+				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@chat", SqlDbType.Int));
+
+				command.Parameters["@user"].Value = other.Id;
+				command.Parameters["@chat"].Value = chatRoomId;
+
+				command.ExecuteNonQuery();
+			}
 		}
 
 		/// <summary>
@@ -338,11 +365,38 @@ namespace ZenChatService
 		/// <param name="chatRoomId">Beizutretender Chat</param>
 		public void RemoveFromChatRoom(int userId, string phoneNumber, int chatRoomId)
 		{
-			throw new NotImplementedException();
+			var chatroom = GetChatRoom(chatRoomId, userId);
+
+			if (!Equals(chatroom.Admin.Id, userId))
+			{
+				throw new NoPermissionException();
+			}
+
+			if (!chatroom.Members.Select(f => f.PhoneNumber).Contains(phoneNumber))
+			{
+				throw new MemberNotFoundException();
+			}
+
+			var other = GetUser(phoneNumber);
+
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("UPDATE [chatroom_user] SET isMember=0 WHERE fk_user = @user AND fk_chatroom = @chat", connection);
+
+				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@chat", SqlDbType.Int));
+
+				command.Parameters["@user"].Value = other.Id;
+				command.Parameters["@chat"].Value = chatRoomId;
+
+				command.ExecuteNonQuery();
+			}
 		}
 
 		/// <summary>
-		///     Schriebt eine Chat-Message in den mitgegebenen Chat
+		///     Schreibt eine Chat-Message in den mitgegebenen Chat
 		/// </summary>
 		/// <param name="userId">Autor</param>
 		/// <param name="chatRoomId">Chat</param>
@@ -350,7 +404,61 @@ namespace ZenChatService
 		/// <returns></returns>
 		public ChatRoom WriteGroupChatMessage(int userId, int chatRoomId, string message)
 		{
-			throw new NotImplementedException();
+			var chat = GetChatRoom(chatRoomId, userId);
+
+			if (!chat.CanWriteMessages)
+			{
+				throw new NoPermissionException();
+			}
+
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("INSERT INTO [message] (author, message) OUTPUT INSERTED.id_message VALUES(@user, @message)", connection);
+
+				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@message", SqlDbType.VarChar));
+
+				command.Parameters["@user"].Value = userId;
+				command.Parameters["@message"].Value = message;
+
+				command.ExecuteNonQuery();
+
+				var messageId = (int)command.ExecuteScalar();
+
+				command.Parameters.Add(new SqlParameter("@idMessage", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@idChatroom", SqlDbType.Int));
+
+				command.Parameters["@idMessage"].Value = messageId;
+				command.Parameters["@idChatroom"].Value = chat.Id;
+
+				var allRelevantMembers = chat.Members.Where(m => !Equals(m.Id, userId)).ToList();
+
+				if (allRelevantMembers.Any())
+				{
+					command.Parameters.Add(new SqlParameter("@other", SqlDbType.Int));
+
+					foreach (var member in allRelevantMembers)
+					{
+						command.CommandText =
+							"INSERT INTO [message_user] (fk_message, fk_user, fk_chatroom) VALUES (@idMessage, @other, @idChatroom)";
+
+						command.Parameters["@other"].Value = member.Id;
+
+						command.ExecuteNonQuery();
+					}
+				}
+				else
+				{
+					command.CommandText =
+							"INSERT INTO [message_user] (fk_message, fk_chatroom) VALUES (@idMessage, @idChatroom)";
+
+					command.ExecuteNonQuery();
+				}
+
+				return chat;
+			}
 		}
 
 		#endregion

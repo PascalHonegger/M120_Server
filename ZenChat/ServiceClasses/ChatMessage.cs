@@ -57,15 +57,18 @@ namespace ZenChatService.ServiceClasses
 
 				while (reader.Read())
 				{
-					var target = new User(reader.GetInt32(0));
-					sentTo.Add(target);
-					if (reader.GetBoolean(1))
+					if (!reader.IsDBNull(0))
 					{
-						readBy.Add(target);
-					}
-					if (reader.GetBoolean(2))
-					{
-						receivedBy.Add(target);
+						var target = new User(reader.GetInt32(0));
+						sentTo.Add(target);
+						if (reader.GetBoolean(1))
+						{
+							readBy.Add(target);
+						}
+						if (reader.GetBoolean(2))
+						{
+							receivedBy.Add(target);
+						}
 					}
 				}
 				SentTo = sentTo;
@@ -115,23 +118,5 @@ namespace ZenChatService.ServiceClasses
 		/// </summary>
 		[DataMember]
 		public IEnumerable<User> SentTo { get; private set; }
-
-		private bool Equals(ChatMessage other) => Equals(Id, other.Id);
-
-		/// <summary>Bestimmt, ob das angegebene Objekt mit dem aktuellen Objekt identisch ist.</summary>
-		/// <returns>true, wenn das angegebene Objekt und das aktuelle Objekt gleich sind, andernfalls false.</returns>
-		/// <param name="obj">Das Objekt, das mit dem aktuellen Objekt verglichen werden soll. </param>
-		/// <filterpriority>2</filterpriority>
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			return obj.GetType() == GetType() && Equals((ChatMessage) obj);
-		}
-
-		/// <summary>Fungiert als die Standardhashfunktion. </summary>
-		/// <returns>Ein Hashcode für das aktuelle Objekt.</returns>
-		/// <filterpriority>2</filterpriority>
-		public override int GetHashCode() => Id.GetHashCode();
 	}
 }

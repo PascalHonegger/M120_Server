@@ -17,21 +17,21 @@ namespace ZenChatService.ServiceClasses
 	[DataContract]
 	public class ChatRoom
 	{
-		private readonly int _playerId;
+		private readonly int _userId;
 
 		/// <summary>
 		///     Setzt die Werte des Chatraums.
 		/// </summary>
 		/// <param name="id">ID des Chatraums</param>
-		/// <param name="playerId">
-		///     ID des Spielers, welcher den Chatraum sehen möchte. Diese wird benötigt, das man nur die
+		/// <param name="userId">
+		///     ID des Users, welcher den Chatraum sehen möchte. Diese wird benötigt, das man nur die
 		///     Nachrichten sehen kann, welche an einen gesendet wurden-
 		/// </param>
-		public ChatRoom(int id, int playerId)
+		public ChatRoom(int id, int userId)
 		{
 			Id = id;
 
-			_playerId = playerId;
+			_userId = userId;
 
 			ToFullChatroom();
 		}
@@ -61,7 +61,7 @@ namespace ZenChatService.ServiceClasses
 		public DateTime Created { get; private set; }
 
 		/// <summary>
-		///     Alle Nachrichten, welchen in diesem Chatraum an den spezifischen <see cref="_playerId" /> gesendet wurde.
+		///     Alle Nachrichten, welchen in diesem Chatraum an den spezifischen <see cref="_userId" /> gesendet wurde.
 		/// </summary>
 		[DataMember]
 		public IEnumerable<ChatMessage> Messages
@@ -72,15 +72,16 @@ namespace ZenChatService.ServiceClasses
 				{
 					connection.Open();
 
+					//Load Messages sent to you
 					var command =
 						new SqlCommand(
-							"SELECT fk_message FROM [message_user] where fk_chatroom = @chatroomId and fk_user = @userId", connection);
+							"SELECT fk_message FROM [message_user] where fk_chatroom = @chatroomId AND fk_user = @userId", connection);
 
 					command.Parameters.Add(new SqlParameter("@chatroomId", SqlDbType.Int));
 					command.Parameters.Add(new SqlParameter("@userId", SqlDbType.Int));
 
 					command.Parameters["@chatroomId"].Value = Id;
-					command.Parameters["@userID"].Value = _playerId;
+					command.Parameters["@userId"].Value = _userId;
 
 					var reader = command.ExecuteReader();
 
@@ -88,6 +89,39 @@ namespace ZenChatService.ServiceClasses
 					{
 						var idMessageUser = reader.GetInt32(0);
 						yield return new ChatMessage(idMessageUser);
+					}
+
+					reader.Close();
+
+					//Load own Messages
+					command.CommandText = "SELECT id_message FROM [message] WHERE author = @userId";
+
+					reader = command.ExecuteReader();
+
+					var sentMessages = new List<int>();
+					while (reader.Read())
+					{
+						sentMessages.Add(reader.GetInt32(0));
+					}
+
+					reader.Close();
+
+					command.Parameters.Add(new SqlParameter("@messageId", SqlDbType.Int));
+
+					foreach (var idMessage in sentMessages)
+					{
+						command.CommandText = "SELECT DISTINCT fk_message FROM [message_user] WHERE fk_chatroom = @chatroomId AND fk_message = @messageId";
+
+						command.Parameters["@messageId"].Value = idMessage;
+
+						reader = command.ExecuteReader();
+
+						while (reader.Read())
+						{
+							yield return new ChatMessage(reader.GetInt32(0));
+						}
+
+						reader.Close();
 					}
 				}
 			}
@@ -153,14 +187,18 @@ namespace ZenChatService.ServiceClasses
 				while (reader.Read())
 				{
 					var idUser = reader.GetInt32(0);
+					var isMember = reader.GetBoolean(1);
 					//Player is Member
-					if (_playerId == idUser)
+					if (_userId == idUser)
 					{
-						CanWriteMessages = reader.GetBoolean(1);
+						CanWriteMessages = isMember;
 						everWasMember = true;
 					}
 
-					list.Add(new User(idUser));
+					if (isMember)
+					{
+						list.Add(new User(idUser));
+					}
 				}
 
 				if (!everWasMember)

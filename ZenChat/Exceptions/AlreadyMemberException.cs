@@ -9,11 +9,11 @@ namespace ZenChatService.Exceptions
 	///     Chatraum konnte nicht gefunden werden.
 	/// </summary>
 	[Serializable]
-	public class MemberNotFoundException : Exception
+	public class AlreadyMemberException : Exception
 	{
 		/// <summary>
 		/// </summary>
-		public MemberNotFoundException() : base("Der gewünschte Benutzer ist kein Mitglied dieses Chats!")
+		public AlreadyMemberException() : base("Der gewünschte User ist bereits ein Mitglied dieses Chats!")
 		{
 		}
 	}

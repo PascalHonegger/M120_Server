@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\AlreadyFriendException.cs" />
+    <Compile Include="Exceptions\AlreadyMemberException.cs" />
     <Compile Include="Exceptions\PhoneNumberAlreadyExistsException.cs" />
     <Compile Include="Exceptions\NoPermissionException.cs" />
     <Compile Include="Exceptions\MemberNotFoundException.cs" />
