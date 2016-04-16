@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.ServiceModel;
 using ZenChatService.Exceptions;
 using ZenChatService.Properties;
 using ZenChatService.ServiceClasses;
@@ -69,7 +70,8 @@ namespace ZenChatService
 
 				if (reader.Read())
 				{
-					throw new PhoneNumberAlreadyExistsException();
+					var e = new PhoneNumberAlreadyExistsException();
+					throw new FaultException<PhoneNumberAlreadyExistsException>(e, e.Message);
 				}
 
 				reader.Close();
@@ -108,7 +110,8 @@ namespace ZenChatService
 				}
 			}
 
-			throw new UserNotFoundException();
+			var e = new UserNotFoundException();
+			throw new FaultException<UserNotFoundException>(e, e.Message);
 		}
 
 		/// <summary>
@@ -193,7 +196,8 @@ namespace ZenChatService
 
 			if (GetFriends(userId).Select(v => v.PhoneNumber).Contains(otherPhone))
 			{
-				throw new AlreadyFriendException();
+				var e = new AlreadyFriendException();
+				throw new FaultException<AlreadyFriendException>(e, e.Message);
 			}
 
 			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
@@ -331,12 +335,14 @@ namespace ZenChatService
 
 			if (!Equals(chatroom.Admin.Id, userId))
 			{
-				throw new NoPermissionException();
+				var e = new NoPermissionException();
+				throw new FaultException<NoPermissionException>(e, e.Message);
 			}
 
 			if (chatroom.Members.Select(f => f.PhoneNumber).Contains(phoneNumber))
 			{
-				throw new AlreadyMemberException();
+				var e = new AlreadyMemberException();
+				throw new FaultException<AlreadyMemberException>(e, e.Message);
 			}
 
 			var other = GetUser(phoneNumber);
@@ -369,12 +375,14 @@ namespace ZenChatService
 
 			if (!Equals(chatroom.Admin.Id, userId))
 			{
-				throw new NoPermissionException();
+				var e = new NoPermissionException();
+				throw new FaultException<NoPermissionException>(e, e.Message);
 			}
 
 			if (!chatroom.Members.Select(f => f.PhoneNumber).Contains(phoneNumber))
 			{
-				throw new MemberNotFoundException();
+				var e = new MemberNotFoundException();
+				throw new FaultException<MemberNotFoundException>(e, e.Message);
 			}
 
 			var other = GetUser(phoneNumber);
@@ -408,7 +416,8 @@ namespace ZenChatService
 
 			if (!chat.CanWriteMessages)
 			{
-				throw new NoPermissionException();
+				var e = new NoPermissionException();
+				throw new FaultException<NoPermissionException>(e, e.Message);
 			}
 
 			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
@@ -492,7 +501,8 @@ namespace ZenChatService
 
 			if (!other.Friends.Select(f => f.Id).Contains(userId))
 			{
-				throw new NoPermissionException();
+				var e = new NoPermissionException();
+				throw new FaultException<NoPermissionException>(e, e.Message);
 			}
 
 			using (var connection = new SqlConnection(Settings.Default.ConnectionString))

@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.ServiceModel;
 using ZenChatService.Exceptions;
 using ZenChatService.Properties;
 
@@ -113,7 +114,8 @@ namespace ZenChatService.ServiceClasses
 				}
 				else
 				{
-					throw new UserNotFoundException();
+					var e = new UserNotFoundException();
+					throw new FaultException<UserNotFoundException>(e, e.Message);
 				}
 			}
 		}

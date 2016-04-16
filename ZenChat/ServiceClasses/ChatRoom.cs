@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
+using System.ServiceModel;
 using ZenChatService.Exceptions;
 using ZenChatService.Properties;
 
@@ -165,7 +166,8 @@ namespace ZenChatService.ServiceClasses
 				}
 				else
 				{
-					throw new ChatNotFoundException();
+					var e = new ChatNotFoundException();
+					throw new FaultException<ChatNotFoundException>(e, e.Message);
 				}
 
 				reader.Close();
@@ -203,7 +205,8 @@ namespace ZenChatService.ServiceClasses
 
 				if (!everWasMember)
 				{
-					throw new MemberNotFoundException();
+					var e = new MemberNotFoundException();
+					throw new FaultException<MemberNotFoundException>(e, e.Message);
 				}
 
 				Members = list;

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Security;
 using System.ServiceModel;
+using ZenChatService.Exceptions;
 
 namespace ZenChatService.ServiceClasses
 {
@@ -12,7 +13,7 @@ namespace ZenChatService.ServiceClasses
 	///     Interface für den allgemeinen ZenChat
 	/// </summary>
 	[ServiceContract(
-		Namespace = "http://zenchatservice.azurewebsites.net/ZenChat.svc",
+		Namespace = "https://zenchatservice.azurewebsites.net/ZenChat.svc",
 		SessionMode = SessionMode.NotAllowed,
 		ProtectionLevel = ProtectionLevel.None,
 		Name = "ZenChatService")]
@@ -36,6 +37,7 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="newPhoneNumber">Neue Telefonnummer</param>
 		/// <returns></returns>
 		[OperationContract]
+		[FaultContract(typeof(PhoneNumberAlreadyExistsException))]
 		User ChangePhoneNumber(int userId, string newPhoneNumber);
 
 		/// <summary>
@@ -44,6 +46,7 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="phoneNumber">Die Nummer des zu ladenden Users</param>
 		/// <returns>Der geladene User, falls dieser existiert</returns>
 		[OperationContract]
+		[FaultContract(typeof(UserNotFoundException))]
 		User GetUser(string phoneNumber);
 
 		/// <summary>
@@ -52,6 +55,7 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="id">ID des users</param>
 		/// <returns>User, falls dieser existiert</returns>
 		[OperationContract]
+		[FaultContract(typeof(UserNotFoundException))]
 		User GetUserFromId(int id);
 
 		/// <summary>
@@ -83,6 +87,8 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="userId">User</param>
 		/// <param name="otherPhone">Hinzuzufügender Freund</param>
 		[OperationContract]
+		[FaultContract(typeof(UserNotFoundException))]
+		[FaultContract(typeof(AlreadyFriendException))]
 		void AddFriend(int userId, string otherPhone);
 
 		/// <summary>
@@ -91,6 +97,7 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="userId">User</param>
 		/// <param name="otherPhone">Zu entfernender Freund</param>
 		[OperationContract]
+		[FaultContract(typeof(UserNotFoundException))]
 		void RemoveFriend(int userId, string otherPhone);
 
 		#endregion
@@ -112,6 +119,8 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="playerId">Der Spieler, an wen die Nachrichten gesendet wurden</param>
 		/// <returns>Chat, falls dieser existiert</returns>
 		[OperationContract]
+		[FaultContract(typeof(ChatNotFoundException))]
+		[FaultContract(typeof(MemberNotFoundException))]
 		ChatRoom GetChatRoom(int chatRoomId, int playerId);
 
 		/// <summary>
@@ -130,6 +139,8 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="phoneNumber">Einzuladender</param>
 		/// <param name="chatRoomId">Beizutretender Chat</param>
 		[OperationContract]
+		[FaultContract(typeof(AlreadyMemberException))]
+		[FaultContract(typeof(NoPermissionException))]
 		void InviteToChatRoom(int userId, string phoneNumber, int chatRoomId);
 
 		/// <summary>
@@ -139,6 +150,8 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="phoneNumber">Einzuladender</param>
 		/// <param name="chatRoomId">Beizutretender Chat</param>
 		[OperationContract]
+		[FaultContract(typeof(MemberNotFoundException))]
+		[FaultContract(typeof(NoPermissionException))]
 		void RemoveFromChatRoom(int userId, string phoneNumber, int chatRoomId);
 
 		/// <summary>
@@ -149,6 +162,8 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="message">Nachricht</param>
 		/// <returns></returns>
 		[OperationContract]
+		[FaultContract(typeof(ChatNotFoundException))]
+		[FaultContract(typeof(NoPermissionException))]
 		ChatRoom WriteGroupChatMessage(int userId, int chatRoomId, string message);
 
 		#endregion
@@ -162,6 +177,7 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="otherPhone">Mit wem</param>
 		/// <returns></returns>
 		[OperationContract]
+		[FaultContract(typeof(UserNotFoundException))]
 		PrivateConversation GetPrivateConversation(int userId, string otherPhone);
 
 		/// <summary>
@@ -171,7 +187,7 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="otherPhone">Mit wem</param>
 		/// <param name="message">Nachricht</param>
 		/// <returns></returns>
-		[OperationContract]
+		[OperationContract, FaultContract(typeof(UserNotFoundException))]
 		PrivateConversation WritePrivateChatMessage(int userId, string otherPhone, string message);
 
 		#endregion

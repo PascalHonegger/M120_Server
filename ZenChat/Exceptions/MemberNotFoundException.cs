@@ -6,7 +6,7 @@ using System;
 namespace ZenChatService.Exceptions
 {
 	/// <summary>
-	///     Chatraum konnte nicht gefunden werden.
+	///     Benutzer konnte nicht in den Mitgliedern gefunden werden.
 	/// </summary>
 	[Serializable]
 	public class MemberNotFoundException : Exception
