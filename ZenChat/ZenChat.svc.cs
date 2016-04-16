@@ -382,6 +382,11 @@ namespace ZenChatService
 		{
 			var other = GetUser(otherPhone);
 
+			if (!other.Friends.Select(f => f.Id).Contains(userId))
+			{
+				throw new NoPermissionException();
+			}
+
 			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
 			{
 				connection.Open();
@@ -424,7 +429,20 @@ namespace ZenChatService
 		/// <returns></returns>
 		public void ReadChatMessage(int userId, int messageId)
 		{
-			throw new NotImplementedException();
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("UPDATE [message_user] SET wasreceived=1, wasRead=1 WHERE fk_user = @user AND fk_message = @message", connection);
+
+				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@message", SqlDbType.Int));
+
+				command.Parameters["@user"].Value = userId;
+				command.Parameters["@message"].Value = messageId;
+
+				command.ExecuteNonQuery();
+			}
 		}
 
 		/// <summary>
@@ -433,9 +451,22 @@ namespace ZenChatService
 		/// <param name="userId">User</param>
 		/// <param name="messageId">Nachricht</param>
 		/// <returns></returns>
-		public void RecieveChatMessage(int userId, int messageId)
+		public void ReceiveChatMessage(int userId, int messageId)
 		{
-			throw new NotImplementedException();
+			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
+			{
+				connection.Open();
+
+				var command = new SqlCommand("UPDATE [message_user] SET wasReceived=1 WHERE fk_user = @user AND fk_message = @message", connection);
+
+				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@message", SqlDbType.Int));
+
+				command.Parameters["@user"].Value = userId;
+				command.Parameters["@message"].Value = messageId;
+
+				command.ExecuteNonQuery();
+			}
 		}
 
 		#endregion

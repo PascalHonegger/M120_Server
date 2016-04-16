@@ -320,6 +320,17 @@ namespace ZenChatServiceTest
 			Assert.That(updatedUser.Name, Is.EqualTo(user.Name));
 		}
 
+		[Test]
+		public void TestCannotChangePhonenumberToExistingPhonenumber()
+		{
+			//Arrange
+			var user = TemporaryUser;
+			var existingPhone = TemporaryUser.PhoneNumber;
+
+			//Act & Assert
+			Assert.Throws<PhoneNumberAlreadyExistsException>(() => UnitUnderTest.ChangePhoneNumber(user.Id, existingPhone));
+		}
+
 		/*
 		[Test]
 		public void TestChatroomOnlyShowsMessagesThatWereSentToYou()
@@ -413,6 +424,19 @@ namespace ZenChatServiceTest
 		}
 
 		[Test]
+		public void TestCannotAddFriendTwice()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var otherUser = TemporaryUser;
+
+			UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber);
+
+			//Act & Assert
+			Assert.Throws<AlreadyFriendException>(() => UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber));
+		}
+
+		[Test]
 		public void TestRemoveFriendsRemovesFriend()
 		{
 			//Arrange
@@ -473,6 +497,94 @@ namespace ZenChatServiceTest
 			Assert.That(msg.Author, Is.EqualTo(randomUser));
 			Assert.That(msg.ReadBy, Is.Empty);
 			Assert.That(msg.ArrivedAt, Is.Empty);
+		}
+
+		[Test]
+		public void TestGetPrivateMessageContainsSentMessages()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var friend = TemporaryUser;
+			const string message = "Hallo Welt";
+
+			UnitUnderTest.AddFriend(randomUser.Id, friend.PhoneNumber);
+
+			UnitUnderTest.WritePrivateChatMessage(friend.Id, randomUser.PhoneNumber, message);
+
+			//Act
+			var conversation = UnitUnderTest.GetPrivateConversation(randomUser.Id, friend.PhoneNumber);
+
+			//Assert
+			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
+			var msg = conversation.Messages.First();
+			Assert.That(msg.Message, Is.EqualTo(message));
+			Assert.That(msg.SentTo, Contains.Item(randomUser));
+			Assert.That(msg.Author, Is.EqualTo(friend));
+			Assert.That(msg.ReadBy, Is.Empty);
+			Assert.That(msg.ArrivedAt, Is.Empty);
+		}
+
+		[Test]
+		public void TestCannotWritePrivateMessageToNoFriends()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var randomUser2 = TemporaryUser;
+			const string message = "Hallo Welt";
+
+			//Act & Assert
+			Assert.Throws<NoPermissionException>(
+				() => UnitUnderTest.WritePrivateChatMessage(randomUser.Id, randomUser2.PhoneNumber, message));
+		}
+
+		[Test]
+		public void TestReceivePrivateMessage()
+		{
+			//Arrange
+			var user = TemporaryUser;
+			var friend = TemporaryUser;
+			const string message = "Hallo Welt";
+
+			UnitUnderTest.AddFriend(user.Id, friend.PhoneNumber);
+			var conversation = UnitUnderTest.WritePrivateChatMessage(user.Id, friend.PhoneNumber, message);
+
+			//Act
+			UnitUnderTest.ReceiveChatMessage(friend.Id, conversation.Messages.First().Id);
+			conversation = UnitUnderTest.GetPrivateConversation(user.Id, friend.PhoneNumber);
+
+			//Assert
+			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
+			var msg = conversation.Messages.First();
+			Assert.That(msg.Message, Is.EqualTo(message));
+			Assert.That(msg.Author, Is.EqualTo(user));
+			Assert.That(msg.SentTo, Contains.Item(friend));
+			Assert.That(msg.ArrivedAt, Contains.Item(friend));
+			Assert.That(msg.ReadBy, Is.Empty);
+		}
+
+		[Test]
+		public void TestReadPrivateMessage()
+		{
+			//Arrange
+			var user = TemporaryUser;
+			var friend = TemporaryUser;
+			const string message = "Hallo Welt";
+
+			UnitUnderTest.AddFriend(user.Id, friend.PhoneNumber);
+			var conversation = UnitUnderTest.WritePrivateChatMessage(user.Id, friend.PhoneNumber, message);
+
+			//Act
+			UnitUnderTest.ReadChatMessage(friend.Id, conversation.Messages.First().Id);
+			conversation = UnitUnderTest.GetPrivateConversation(user.Id, friend.PhoneNumber);
+
+			//Assert
+			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
+			var msg = conversation.Messages.First();
+			Assert.That(msg.Message, Is.EqualTo(message));
+			Assert.That(msg.Author, Is.EqualTo(user));
+			Assert.That(msg.SentTo, Contains.Item(friend));
+			Assert.That(msg.ArrivedAt, Contains.Item(friend));
+			Assert.That(msg.ReadBy, Contains.Item(friend));
 		}
 	}
 }

@@ -194,7 +194,7 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="messageId">Nachricht</param>
 		/// <returns></returns>
 		[OperationContract]
-		void RecieveChatMessage(int userId, int messageId);
+		void ReceiveChatMessage(int userId, int messageId);
 
 		#endregion
 	}
