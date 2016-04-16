@@ -1,20 +1,23 @@
 ﻿// Copyright (c) 2016 Pascal Honegger
 // All rights reserved.
 
-using System;
+using System.Runtime.Serialization;
 
 namespace ZenChatService.Exceptions
 {
 	/// <summary>
 	///     Chatraum konnte nicht gefunden werden.
 	/// </summary>
-	[Serializable]
-	public class PhoneNumberAlreadyExistsException : Exception
+	[DataContract]
+	public class PhoneNumberAlreadyExistsException
 	{
 		/// <summary>
 		/// </summary>
-		public PhoneNumberAlreadyExistsException() : base("Es existiert bereits ein Account mit dieser Telefonnummer!")
+		public PhoneNumberAlreadyExistsException(string message = "Es existiert bereits ein Account mit dieser Telefonnummer!")
 		{
+			Message = message;
 		}
+
+		public string Message { get; }
 	}
 }

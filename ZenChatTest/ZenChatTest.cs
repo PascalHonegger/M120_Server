@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.ServiceModel;
 using NUnit.Framework;
 using ZenChatService;
 using ZenChatService.Exceptions;
@@ -255,7 +256,7 @@ namespace ZenChatServiceTest
 		public void TestGetChatRoomThrowsException()
 		{
 			//Act & Assert
-			Assert.Throws<ChatNotFoundException>(() => UnitUnderTest.GetChatRoom(0, 0));
+			Assert.Throws<FaultException<ChatNotFoundException>>(() => UnitUnderTest.GetChatRoom(0, 0));
 		}
 
 		[Test]
@@ -286,7 +287,7 @@ namespace ZenChatServiceTest
 			const int id = 1;
 
 			//Act & Assert
-			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUserFromId(id));
+			Assert.Throws<FaultException<UserNotFoundException>>(() => UnitUnderTest.GetUserFromId(id));
 		}
 
 		[Test]
@@ -317,7 +318,7 @@ namespace ZenChatServiceTest
 			const string phone = "This Phone Number will never exist!";
 
 			//Act & Assert
-			Assert.Throws<UserNotFoundException>(() => UnitUnderTest.GetUser(phone));
+			Assert.Throws<FaultException<UserNotFoundException>>(() => UnitUnderTest.GetUser(phone));
 		}
 
 		[Test]
@@ -360,7 +361,7 @@ namespace ZenChatServiceTest
 			var existingPhone = TemporaryUser.PhoneNumber;
 
 			//Act & Assert
-			Assert.Throws<PhoneNumberAlreadyExistsException>(() => UnitUnderTest.ChangePhoneNumber(user.Id, existingPhone));
+			Assert.Throws<FaultException<PhoneNumberAlreadyExistsException>>(() => UnitUnderTest.ChangePhoneNumber(user.Id, existingPhone));
 		}
 
 		[Test]
@@ -411,7 +412,7 @@ namespace ZenChatServiceTest
 			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
 
 			//Act & Assert
-			Assert.Throws<MemberNotFoundException>(() => UnitUnderTest.GetChatRoom(createdChat.Id, randomUser.Id));
+			Assert.Throws<FaultException<MemberNotFoundException>>(() => UnitUnderTest.GetChatRoom(createdChat.Id, randomUser.Id));
 
 			//Cleanup
 			DeleteChat(createdChat.Id);
@@ -456,7 +457,7 @@ namespace ZenChatServiceTest
 			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id);
 
 			//Assert
-			Assert.Throws<AlreadyMemberException>(
+			Assert.Throws<FaultException<AlreadyMemberException>>(
 				() => UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id));
 
 			//Cleanup
@@ -476,7 +477,7 @@ namespace ZenChatServiceTest
 			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, chat.Id);
 
 			//Act & Assert
-			Assert.Throws<NoPermissionException>(
+			Assert.Throws<FaultException<NoPermissionException>>(
 				() => UnitUnderTest.InviteToChatRoom(user2.Id, user3.PhoneNumber, chat.Id));
 
 			//Cleanup
@@ -528,7 +529,7 @@ namespace ZenChatServiceTest
 			Assert.That(createdChat.Members, !Contains.Item(removedUser));
 
 			//Act & Assert
-			Assert.Throws<NoPermissionException>(() => UnitUnderTest.WriteGroupChatMessage(removedUser.Id, createdChat.Id, "Hallo Welt"));
+			Assert.Throws<FaultException<NoPermissionException>>(() => UnitUnderTest.WriteGroupChatMessage(removedUser.Id, createdChat.Id, "Hallo Welt"));
 
 			//Cleanup
 			DeleteChat(createdChat.Id);
@@ -597,7 +598,7 @@ namespace ZenChatServiceTest
 			UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber);
 
 			//Act & Assert
-			Assert.Throws<AlreadyFriendException>(() => UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber));
+			Assert.Throws<FaultException<AlreadyFriendException>>(() => UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber));
 		}
 
 		[Test]
@@ -697,7 +698,7 @@ namespace ZenChatServiceTest
 			const string message = "Hallo Welt";
 
 			//Act & Assert
-			Assert.Throws<NoPermissionException>(
+			Assert.Throws<FaultException<NoPermissionException>>(
 				() => UnitUnderTest.WritePrivateChatMessage(randomUser.Id, randomUser2.PhoneNumber, message));
 		}
 
