@@ -1,20 +1,23 @@
 ﻿// Copyright (c) 2016 Pascal Honegger
 // All rights reserved.
 
-using System;
+using System.Runtime.Serialization;
 
 namespace ZenChatService.Exceptions
 {
 	/// <summary>
 	///     Chatraum konnte nicht gefunden werden.
 	/// </summary>
-	[Serializable]
-	public class ChatNotFoundException : Exception
+	[DataContract]
+	public class ChatNotFoundException
 	{
 		/// <summary>
 		/// </summary>
-		public ChatNotFoundException() : base("Der gewünschte Chatraum konnte nicht gefunden werden")
+		public ChatNotFoundException(string message = "Der gewünschte Chatraum konnte nicht gefunden werden")
 		{
+			Message = message;
 		}
+
+		public string Message { get; }
 	}
 }

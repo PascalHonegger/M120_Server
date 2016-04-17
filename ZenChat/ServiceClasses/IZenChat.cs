@@ -16,7 +16,7 @@ namespace ZenChatService.ServiceClasses
 		Namespace = "https://zenchatservice.azurewebsites.net/ZenChat.svc",
 		SessionMode = SessionMode.NotAllowed,
 		ProtectionLevel = ProtectionLevel.None,
-		Name = "ZenChatService")]
+		Name = "Zen")]
 	public interface IZenChat
 	{
 		#region User
@@ -187,7 +187,8 @@ namespace ZenChatService.ServiceClasses
 		/// <param name="otherPhone">Mit wem</param>
 		/// <param name="message">Nachricht</param>
 		/// <returns></returns>
-		[OperationContract, FaultContract(typeof(UserNotFoundException))]
+		[OperationContract]
+		[FaultContract(typeof(UserNotFoundException))]
 		PrivateConversation WritePrivateChatMessage(int userId, string otherPhone, string message);
 
 		#endregion

@@ -132,7 +132,7 @@ namespace ZenChatService
 				//User exists
 				return new Tuple<int, User>(user.Id, ChangeUsername(user.Id, name));
 			}
-			catch (UserNotFoundException)
+			catch (FaultException<UserNotFoundException>)
 			{
 				//Create new user
 
