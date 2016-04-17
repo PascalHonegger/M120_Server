@@ -39,13 +39,13 @@ namespace ZenChatService.ServiceClasses
 		///     Anzeigename des Spielers. Ist nicht einmalig und wird als Nickname benutzt.
 		/// </summary>
 		[DataMember]
-		public string Name { get; private set; }
+		public string Name { get; set; }
 
 		/// <summary>
 		///     Telefonnummer des Users. Ist einmalig und wird beim Login verwendet.
 		/// </summary>
 		[DataMember]
-		public string PhoneNumber { get; private set; }
+		public string PhoneNumber { get; set; }
 
 		/// <summary>
 		///     Alle Freunde des Users

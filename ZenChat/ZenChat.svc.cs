@@ -485,7 +485,9 @@ namespace ZenChatService
 			var user1 = GetUserFromId(userId);
 			var user2 = GetUser(otherPhone);
 
-			return new PrivateConversation(user1, user2);
+			var conversation = new PrivateConversation(user1, user2);
+
+			return conversation;
 		}
 
 		/// <summary>

@@ -41,25 +41,25 @@ namespace ZenChatService.ServiceClasses
 		///     Ersteller / Admin des Chatraumes
 		/// </summary>
 		[DataMember]
-		public User Admin { get; private set; }
+		public User Admin { get; set; }
 
 		/// <summary>
 		///     ID des Chatraumes
 		/// </summary>
 		[DataMember]
-		public int Id { get; }
+		public int Id { get; set; }
 
 		/// <summary>
 		///     Das Thema des Chats. Kann beim Erstellen eines Chats gesetzt werden.
 		/// </summary>
 		[DataMember]
-		public string Topic { get; private set; }
+		public string Topic { get; set; }
 
 		/// <summary>
 		///     An welchem Datum dieser Chatraum erstellt wurde.
 		/// </summary>
 		[DataMember]
-		public DateTime Created { get; private set; }
+		public DateTime Created { get; set; }
 
 		/// <summary>
 		///     Alle Nachrichten, welchen in diesem Chatraum an den spezifischen <see cref="_userId" /> gesendet wurde.
