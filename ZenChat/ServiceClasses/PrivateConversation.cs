@@ -36,6 +36,8 @@ namespace ZenChatService.ServiceClasses
 
 		private IEnumerable<ChatMessage> GetMessages()
 		{
+			var user1 = Members.First();
+			var user2 = Members.Last();
 			using (var connection = new SqlConnection(Settings.Default.ConnectionString))
 			{
 				connection.Open();
@@ -46,15 +48,19 @@ namespace ZenChatService.ServiceClasses
 				command.Parameters.Add(new SqlParameter("@user1", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@user2", SqlDbType.Int));
 
-				command.Parameters["@user1"].Value = Members.First().Id;
-				command.Parameters["@user2"].Value = Members.Last().Id;
+				command.Parameters["@user1"].Value = user1.Id;
+				command.Parameters["@user2"].Value = user2.Id;
 
 				var reader = command.ExecuteReader();
 
 				while (reader.Read())
 				{
 					var idMessage = reader.GetInt32(0);
-					yield return new ChatMessage(idMessage);
+					var message = new ChatMessage(idMessage);
+					if (Equals(message.Author, user2))
+					{
+						yield return message;
+					}
 				}
 				reader.Close();
 
@@ -66,7 +72,11 @@ namespace ZenChatService.ServiceClasses
 				while (reader.Read())
 				{
 					var idMessage = reader.GetInt32(0);
-					yield return new ChatMessage(idMessage);
+					var message = new ChatMessage(idMessage);
+					if (Equals(message.Author, user1))
+					{
+						yield return message;
+					}
 				}
 			}
 		}

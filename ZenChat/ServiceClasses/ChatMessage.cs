@@ -67,9 +67,9 @@ namespace ZenChatService.ServiceClasses
 
 				reader = command.ExecuteReader();
 
-				var sentTo = new List<User>();
-				var readBy = new List<User>();
-				var receivedBy = new List<User>();
+				var sentTo = new List<User> { Author };
+				var readBy = new List<User> { Author };
+				var receivedBy = new List<User> { Author };
 
 				while (reader.Read())
 				{
