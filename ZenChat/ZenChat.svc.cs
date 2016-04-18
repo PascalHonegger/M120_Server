@@ -95,7 +95,7 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("SELECT id_user FROM [user] WHERE phone = @phone", connection);
+				var command = new SqlCommand("SELECT id_user, name, phone FROM [user] WHERE phone = @phone", connection);
 
 				command.Parameters.Add(new SqlParameter("@phone", SqlDbType.NVarChar));
 
@@ -105,8 +105,7 @@ namespace ZenChatService
 
 				if (reader.Read())
 				{
-					var id = reader.GetInt32(0);
-					return new User(id);
+					return new User(reader.GetInt32(0), reader.GetString(1), reader.GetString(2));
 				}
 			}
 

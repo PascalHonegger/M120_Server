@@ -31,6 +31,21 @@ namespace ZenChatService.ServiceClasses
 		}
 
 		/// <summary>
+		///     Setzt die <see cref="Id" /> des Users und ruft <see cref="ToFullUser" /> auf.
+		/// </summary>
+		/// <param name="id">
+		///     <see cref="Id" />
+		/// </param>
+		/// <param name="username">Benutzernamen</param>
+		/// <param name="phonenumer">Telefonnummer</param>
+		public User(int id, string username, string phonenumer)
+		{
+			Id = id;
+			Name = username;
+			PhoneNumber = phonenumer;
+		}
+
+		/// <summary>
 		///     ID des Spielers. Kommt aus der Datenbank.
 		/// </summary>
 		public int Id { get; }
