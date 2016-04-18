@@ -179,9 +179,7 @@ namespace ZenChatService
 		/// <returns>Alle Freunde des Users</returns>
 		public IEnumerable<User> GetFriends(int userId)
 		{
-			var user = GetUserFromId(userId);
-
-			return user.Friends;
+			return new User(userId, string.Empty, string.Empty).Friends;
 		}
 
 		/// <summary>

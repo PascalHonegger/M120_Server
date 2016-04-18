@@ -69,8 +69,6 @@ namespace ZenChatService.ServiceClasses
 		{
 			get
 			{
-				var friendIds = new List<int>();
-
 				using (var connection = new SqlConnection(Settings.Default.ConnectionString))
 				{
 					connection.Open();
@@ -85,7 +83,7 @@ namespace ZenChatService.ServiceClasses
 
 					while (reader.Read())
 					{
-						friendIds.Add(reader.GetInt32(0));
+						yield return new User(reader.GetInt32(0));
 					}
 
 					reader.Close();
@@ -96,11 +94,9 @@ namespace ZenChatService.ServiceClasses
 
 					while (reader.Read())
 					{
-						friendIds.Add(reader.GetInt32(0));
+						yield return new User(reader.GetInt32(0));
 					}
 				}
-
-				return friendIds.Select(id => new User(id));
 			}
 		}
 
