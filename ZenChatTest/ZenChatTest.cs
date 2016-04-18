@@ -154,6 +154,212 @@ namespace ZenChatServiceTest
 		}
 
 		[Test]
+		public void TestAddFriendsAddsFriend()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var otherUser = TemporaryUser;
+
+			//Act
+			UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber);
+
+			//Assert
+			Assert.That(randomUser.Friends, Is.Not.Empty);
+			Assert.That(randomUser.Friends, Contains.Item(otherUser));
+		}
+
+		[Test]
+		public void TestCannotAddFriendTwice()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var otherUser = TemporaryUser;
+
+			UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber);
+
+			//Act & Assert
+			Assert.Throws<FaultException<AlreadyFriendException>>(
+				() => UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber));
+		}
+
+		[Test]
+		public void TestCannotAddMembersIfNotAdmin()
+		{
+			//Arrange
+			const string topic = "ExampleTopic";
+			var user = TemporaryUser;
+			var user2 = TemporaryUser;
+			var user3 = TemporaryUser;
+			var chat = UnitUnderTest.CreateChatRoom(user.Id, topic);
+
+			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, chat.Id);
+
+			//Act & Assert
+			Assert.Throws<FaultException<NoPermissionException>>(
+				() => UnitUnderTest.InviteToChatRoom(user2.Id, user3.PhoneNumber, chat.Id));
+
+			//Cleanup
+			DeleteChat(chat.Id);
+		}
+
+		[Test]
+		public void TestCannotChangePhonenumberToExistingPhonenumber()
+		{
+			//Arrange
+			var user = TemporaryUser;
+			var existingPhone = TemporaryUser.PhoneNumber;
+
+			//Act & Assert
+			Assert.Throws<FaultException<PhoneNumberAlreadyExistsException>>(
+				() => UnitUnderTest.ChangePhoneNumber(user.Id, existingPhone));
+		}
+
+		[Test]
+		public void TestCannotGetChatroomIfNeverWasMember()
+		{
+			//Arrange
+			const string topic = "ExampleTopic";
+			var user = TemporaryUser;
+			var randomUser = TemporaryUser;
+			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
+
+			//Act & Assert
+			Assert.Throws<FaultException<MemberNotFoundException>>(() => UnitUnderTest.GetChatRoom(createdChat.Id, randomUser.Id));
+
+			//Cleanup
+			DeleteChat(createdChat.Id);
+		}
+
+		[Test]
+		public void TestCannotInviteSameMember()
+		{
+			//Arrange
+			const string topic = "ExampleTopic";
+			var user = TemporaryUser;
+			var user2 = TemporaryUser;
+			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
+
+			//Act
+			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id);
+
+			//Assert
+			Assert.Throws<FaultException<AlreadyMemberException>>(
+				() => UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id));
+
+			//Cleanup
+			DeleteChat(createdChat.Id);
+		}
+
+		[Test]
+		public void TestCannotWriteMessagesAfterBeingRemoved()
+		{
+			//Arrange
+			const string topic = "ExampleTopic";
+			var admin = TemporaryUser;
+			var removedUser = TemporaryUser;
+			var createdChat = UnitUnderTest.CreateChatRoom(admin.Id, topic);
+			UnitUnderTest.InviteToChatRoom(admin.Id, removedUser.PhoneNumber, createdChat.Id);
+
+			//Values are set correctly
+			UnitUnderTest.RemoveFromChatRoom(admin.Id, removedUser.PhoneNumber, createdChat.Id);
+			createdChat = UnitUnderTest.GetChatRoom(createdChat.Id, removedUser.Id);
+
+			Assert.That(createdChat.CanWriteMessages, Is.False);
+			Assert.That(createdChat.Members, Contains.Item(admin));
+			Assert.That(createdChat.Members, !Contains.Item(removedUser));
+
+			//Act & Assert
+			Assert.Throws<FaultException<NoPermissionException>>(
+				() => UnitUnderTest.WriteGroupChatMessage(removedUser.Id, createdChat.Id, "Hallo Welt"));
+
+			//Cleanup
+			DeleteChat(createdChat.Id);
+		}
+
+		[Test]
+		public void TestCannotWritePrivateMessageToNoFriends()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var randomUser2 = TemporaryUser;
+			const string message = "Hallo Welt";
+
+			//Act & Assert
+			Assert.Throws<FaultException<NoPermissionException>>(
+				() => UnitUnderTest.WritePrivateChatMessage(randomUser.Id, randomUser2.PhoneNumber, message));
+		}
+
+		[Test]
+		public void TestChangePhonenumberChangesPhonenumber()
+		{
+			//Arrange
+			var user = TemporaryUser;
+			var newPhoneNumber = RandomString;
+
+			//Act
+			var updatedUser = UnitUnderTest.ChangePhoneNumber(user.Id, newPhoneNumber);
+
+			//Assert
+			Assert.That(updatedUser.Id, Is.EqualTo(user.Id));
+			Assert.That(updatedUser.PhoneNumber, Is.EqualTo(newPhoneNumber));
+			Assert.That(updatedUser.Name, Is.EqualTo(user.Name));
+		}
+
+		[Test]
+		public void TestChangeUsernameChangesUsername()
+		{
+			//Arrange
+			var user = TemporaryUser;
+			var newUsername = RandomString;
+
+			//Act
+			var updatedUser = UnitUnderTest.ChangeUsername(user.Id, newUsername);
+
+			//Assert
+			Assert.That(updatedUser.Id, Is.EqualTo(user.Id));
+			Assert.That(updatedUser.PhoneNumber, Is.EqualTo(user.PhoneNumber));
+			Assert.That(updatedUser.Name, Is.EqualTo(newUsername));
+		}
+
+		[Test]
+		public void TestChatroomOnlyShowsMessagesThatWereSentToYou()
+		{
+			//Arrange
+			const string topic = "ExampleTopic";
+			var user = TemporaryUser;
+			var user2 = TemporaryUser;
+			const string message = "Hallo Welt";
+			const string message2 = "Hallo zweite Welt";
+			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
+
+			//Act
+
+			//Write Message, before the other user was part of the chatroom
+			UnitUnderTest.WriteGroupChatMessage(user.Id, createdChat.Id, message);
+
+			//Add user to chat
+			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id);
+
+			//Write Message, after the other user was added
+			UnitUnderTest.WriteGroupChatMessage(user.Id, createdChat.Id, message2);
+
+			//Load Chat
+			var chatSeenByUser1 = UnitUnderTest.GetChatRoom(createdChat.Id, user.Id);
+			var chatSeenByUser2 = UnitUnderTest.GetChatRoom(createdChat.Id, user2.Id);
+
+			//Assert
+			Assert.That(chatSeenByUser1.Members, Is.EqualTo(chatSeenByUser2.Members));
+			Assert.That(chatSeenByUser1.Members, Contains.Item(user));
+			Assert.That(chatSeenByUser1.Members, Contains.Item(user2));
+			Assert.That(chatSeenByUser1.Messages.Count(), Is.EqualTo(2));
+			Assert.That(chatSeenByUser2.Messages.Count(), Is.EqualTo(1));
+			Assert.That(chatSeenByUser2.Messages.First().Message, Is.EqualTo(message2));
+
+			//Cleanup
+			DeleteChat(createdChat.Id);
+		}
+
+		[Test]
 		public void TestCreatedChatRoomContainsMember()
 		{
 			//Arrange
@@ -260,6 +466,46 @@ namespace ZenChatServiceTest
 		}
 
 		[Test]
+		public void TestGetPrivateConversationWithNewFriendIsEmpty()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var friend = TemporaryUser;
+
+			UnitUnderTest.AddFriend(randomUser.Id, friend.PhoneNumber);
+
+			//Act
+			var conversation = UnitUnderTest.GetPrivateConversation(randomUser.Id, friend.PhoneNumber);
+
+			//Assert
+			Assert.That(conversation.Messages, Is.Empty);
+			Assert.That(conversation.Members, Contains.Item(randomUser).And.Contains(friend));
+		}
+
+		[Test]
+		public void TestGetPrivateMessageContainsSentMessages()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var friend = TemporaryUser;
+			const string message = "Hallo Welt";
+
+			UnitUnderTest.AddFriend(randomUser.Id, friend.PhoneNumber);
+
+			UnitUnderTest.WritePrivateChatMessage(friend.Id, randomUser.PhoneNumber, message);
+
+			//Act
+			var conversation = UnitUnderTest.GetPrivateConversation(randomUser.Id, friend.PhoneNumber);
+
+			//Assert
+			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
+			var msg = conversation.Messages.First();
+			Assert.That(msg.Message, Is.EqualTo(message));
+			Assert.That(msg.SentTo, Contains.Item(randomUser.PhoneNumber));
+			Assert.That(msg.Author, Is.EqualTo(friend));
+		}
+
+		[Test]
 		public void TestGetUserFromIdReturnsExistingUser()
 		{
 			//Arrange
@@ -322,103 +568,6 @@ namespace ZenChatServiceTest
 		}
 
 		[Test]
-		public void TestChangeUsernameChangesUsername()
-		{
-			//Arrange
-			var user = TemporaryUser;
-			var newUsername = RandomString;
-			
-			//Act
-			var updatedUser = UnitUnderTest.ChangeUsername(user.Id, newUsername);
-
-			//Assert
-			Assert.That(updatedUser.Id, Is.EqualTo(user.Id));
-			Assert.That(updatedUser.PhoneNumber, Is.EqualTo(user.PhoneNumber));
-			Assert.That(updatedUser.Name, Is.EqualTo(newUsername));
-		}
-
-		[Test]
-		public void TestChangePhonenumberChangesPhonenumber()
-		{
-			//Arrange
-			var user = TemporaryUser;
-			var newPhoneNumber = RandomString;
-
-			//Act
-			var updatedUser = UnitUnderTest.ChangePhoneNumber(user.Id, newPhoneNumber);
-
-			//Assert
-			Assert.That(updatedUser.Id, Is.EqualTo(user.Id));
-			Assert.That(updatedUser.PhoneNumber, Is.EqualTo(newPhoneNumber));
-			Assert.That(updatedUser.Name, Is.EqualTo(user.Name));
-		}
-
-		[Test]
-		public void TestCannotChangePhonenumberToExistingPhonenumber()
-		{
-			//Arrange
-			var user = TemporaryUser;
-			var existingPhone = TemporaryUser.PhoneNumber;
-
-			//Act & Assert
-			Assert.Throws<FaultException<PhoneNumberAlreadyExistsException>>(() => UnitUnderTest.ChangePhoneNumber(user.Id, existingPhone));
-		}
-
-		[Test]
-		public void TestChatroomOnlyShowsMessagesThatWereSentToYou()
-		{
-			//Arrange
-			const string topic = "ExampleTopic";
-			var user = TemporaryUser;
-			var user2 = TemporaryUser;
-			const string message = "Hallo Welt";
-			const string message2 = "Hallo zweite Welt";
-			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
-
-			//Act
-
-			//Write Message, before the other user was part of the chatroom
-			UnitUnderTest.WriteGroupChatMessage(user.Id, createdChat.Id, message);
-
-			//Add user to chat
-			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id);
-
-			//Write Message, after the other user was added
-			UnitUnderTest.WriteGroupChatMessage(user.Id, createdChat.Id, message2);
-
-			//Load Chat
-			var chatSeenByUser1= UnitUnderTest.GetChatRoom(createdChat.Id, user.Id);
-			var chatSeenByUser2 = UnitUnderTest.GetChatRoom(createdChat.Id, user2.Id);
-
-			//Assert
-			Assert.That(chatSeenByUser1.Members, Is.EqualTo(chatSeenByUser2.Members));
-			Assert.That(chatSeenByUser1.Members, Contains.Item(user));
-			Assert.That(chatSeenByUser1.Members, Contains.Item(user2));
-			Assert.That(chatSeenByUser1.Messages.Count(), Is.EqualTo(2));
-			Assert.That(chatSeenByUser2.Messages.Count(), Is.EqualTo(1));
-			Assert.That(chatSeenByUser2.Messages.First().Message, Is.EqualTo(message2));
-
-			//Cleanup
-			DeleteChat(createdChat.Id);
-		}
-
-		[Test]
-		public void TestCannotGetChatroomIfNeverWasMember()
-		{
-			//Arrange
-			const string topic = "ExampleTopic";
-			var user = TemporaryUser;
-			var randomUser = TemporaryUser;
-			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
-
-			//Act & Assert
-			Assert.Throws<FaultException<MemberNotFoundException>>(() => UnitUnderTest.GetChatRoom(createdChat.Id, randomUser.Id));
-
-			//Cleanup
-			DeleteChat(createdChat.Id);
-		}
-
-		[Test]
 		public void TestInviteToChatRoomAddsMember()
 		{
 			//Arrange
@@ -439,97 +588,6 @@ namespace ZenChatServiceTest
 			Assert.That(createdChat.Members, Contains.Item(user2));
 			Assert.That(createdChat.Topic, Is.EqualTo(topic));
 			Assert.That(createdChat.Messages, Is.Empty);
-
-			//Cleanup
-			DeleteChat(createdChat.Id);
-		}
-
-		[Test]
-		public void TestCannotInviteSameMember()
-		{
-			//Arrange
-			const string topic = "ExampleTopic";
-			var user = TemporaryUser;
-			var user2 = TemporaryUser;
-			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
-
-			//Act
-			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id);
-
-			//Assert
-			Assert.Throws<FaultException<AlreadyMemberException>>(
-				() => UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id));
-
-			//Cleanup
-			DeleteChat(createdChat.Id);
-		}
-
-		[Test]
-		public void TestCannotAddMembersIfNotAdmin()
-		{
-			//Arrange
-			const string topic = "ExampleTopic";
-			var user = TemporaryUser;
-			var user2 = TemporaryUser;
-			var user3 = TemporaryUser;
-			var chat = UnitUnderTest.CreateChatRoom(user.Id, topic);
-
-			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, chat.Id);
-
-			//Act & Assert
-			Assert.Throws<FaultException<NoPermissionException>>(
-				() => UnitUnderTest.InviteToChatRoom(user2.Id, user3.PhoneNumber, chat.Id));
-
-			//Cleanup
-			DeleteChat(chat.Id);
-		}
-
-		[Test]
-		public void TestRemoveFromChatRoomDisablesMember()
-		{
-			//Arrange
-			const string topic = "ExampleTopic";
-			var user = TemporaryUser;
-			var user2 = TemporaryUser;
-			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
-			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id);
-
-			//Act
-			UnitUnderTest.RemoveFromChatRoom(user.Id, user2.PhoneNumber, createdChat.Id);
-			createdChat = UnitUnderTest.GetChatRoom(createdChat.Id, user.Id);
-
-			//Assert
-			Assert.That(createdChat.Admin, Is.EqualTo(user));
-			Assert.That(createdChat.CanWriteMessages);
-			Assert.That(createdChat.Members, Contains.Item(user));
-			Assert.That(createdChat.Members, !Contains.Item(user2));
-			Assert.That(createdChat.Topic, Is.EqualTo(topic));
-			Assert.That(createdChat.Messages, Is.Empty);
-
-			//Cleanup
-			DeleteChat(createdChat.Id);
-		}
-
-		[Test]
-		public void TestCannotWriteMessagesAfterBeingRemoved()
-		{
-			//Arrange
-			const string topic = "ExampleTopic";
-			var admin = TemporaryUser;
-			var removedUser = TemporaryUser;
-			var createdChat = UnitUnderTest.CreateChatRoom(admin.Id, topic);
-			UnitUnderTest.InviteToChatRoom(admin.Id, removedUser.PhoneNumber, createdChat.Id);
-
-			//Values are set correctly
-			UnitUnderTest.RemoveFromChatRoom(admin.Id, removedUser.PhoneNumber, createdChat.Id);
-			createdChat = UnitUnderTest.GetChatRoom(createdChat.Id, removedUser.Id);
-
-			Assert.That(createdChat.CanWriteMessages, Is.False);
-			Assert.That(createdChat.Members, Contains.Item(admin));
-			Assert.That(createdChat.Members, !Contains.Item(removedUser));
-
-			//Act & Assert
-			Assert.Throws<FaultException<NoPermissionException>>(() => UnitUnderTest.WriteGroupChatMessage(removedUser.Id, createdChat.Id, "Hallo Welt"));
 
 			//Cleanup
 			DeleteChat(createdChat.Id);
@@ -574,128 +632,28 @@ namespace ZenChatServiceTest
 		}
 
 		[Test]
-		public void TestAddFriendsAddsFriend()
+		public void TestReadPrivateMessage()
 		{
 			//Arrange
-			var randomUser = TemporaryUser;
-			var otherUser = TemporaryUser;
-
-			//Act
-			UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber);
-
-			//Assert
-			Assert.That(randomUser.Friends, Is.Not.Empty);
-			Assert.That(randomUser.Friends, Contains.Item(otherUser));
-		}
-
-		[Test]
-		public void TestCannotAddFriendTwice()
-		{
-			//Arrange
-			var randomUser = TemporaryUser;
-			var otherUser = TemporaryUser;
-
-			UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber);
-
-			//Act & Assert
-			Assert.Throws<FaultException<AlreadyFriendException>>(() => UnitUnderTest.AddFriend(randomUser.Id, otherUser.PhoneNumber));
-		}
-
-		[Test]
-		public void TestRemoveFriendsRemovesFriend()
-		{
-			//Arrange
-			var randomUser = TemporaryUser;
-			var friend1 = TemporaryUser;
-			var friend2 = TemporaryUser;
-			var friend3 = TemporaryUser;
-
-			UnitUnderTest.AddFriend(randomUser.Id, friend1.PhoneNumber);
-			UnitUnderTest.AddFriend(randomUser.Id, friend2.PhoneNumber);
-			UnitUnderTest.AddFriend(randomUser.Id, friend3.PhoneNumber);
-
-			//Act
-			UnitUnderTest.RemoveFriend(randomUser.Id, friend2.PhoneNumber);
-
-			//Assert
-			Assert.That(randomUser.Friends, Is.Not.Empty);
-			Assert.That(randomUser.Friends, Contains.Item(friend1));
-			Assert.That(randomUser.Friends, !Contains.Item(friend2));
-			Assert.That(randomUser.Friends, Contains.Item(friend3));
-		}
-
-		[Test]
-		public void TestGetPrivateConversationWithNewFriendIsEmpty()
-		{
-			//Arrange
-			var randomUser = TemporaryUser;
-			var friend = TemporaryUser;
-
-			UnitUnderTest.AddFriend(randomUser.Id, friend.PhoneNumber);
-
-			//Act
-			var conversation = UnitUnderTest.GetPrivateConversation(randomUser.Id, friend.PhoneNumber);
-
-			//Assert
-			Assert.That(conversation.Messages, Is.Empty);
-			Assert.That(conversation.Members, Contains.Item(randomUser).And.Contains(friend));
-		}
-
-		[Test]
-		public void TestWritePrivateMessageAddsMessage()
-		{
-			//Arrange
-			var randomUser = TemporaryUser;
+			var user = TemporaryUser;
 			var friend = TemporaryUser;
 			const string message = "Hallo Welt";
 
-			UnitUnderTest.AddFriend(randomUser.Id, friend.PhoneNumber);
+			UnitUnderTest.AddFriend(user.Id, friend.PhoneNumber);
+			var conversation = UnitUnderTest.WritePrivateChatMessage(user.Id, friend.PhoneNumber, message);
 
 			//Act
-			var conversation = UnitUnderTest.WritePrivateChatMessage(randomUser.Id, friend.PhoneNumber, message);
+			UnitUnderTest.ReadChatMessage(friend.Id, conversation.Messages.First().Id);
+			conversation = UnitUnderTest.GetPrivateConversation(user.Id, friend.PhoneNumber);
 
 			//Assert
 			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
 			var msg = conversation.Messages.First();
 			Assert.That(msg.Message, Is.EqualTo(message));
+			Assert.That(msg.Author, Is.EqualTo(user));
 			Assert.That(msg.SentTo, Contains.Item(friend.PhoneNumber));
-			Assert.That(msg.Author, Is.EqualTo(randomUser));
-		}
-
-		[Test]
-		public void TestGetPrivateMessageContainsSentMessages()
-		{
-			//Arrange
-			var randomUser = TemporaryUser;
-			var friend = TemporaryUser;
-			const string message = "Hallo Welt";
-
-			UnitUnderTest.AddFriend(randomUser.Id, friend.PhoneNumber);
-
-			UnitUnderTest.WritePrivateChatMessage(friend.Id, randomUser.PhoneNumber, message);
-
-			//Act
-			var conversation = UnitUnderTest.GetPrivateConversation(randomUser.Id, friend.PhoneNumber);
-
-			//Assert
-			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
-			var msg = conversation.Messages.First();
-			Assert.That(msg.Message, Is.EqualTo(message));
-			Assert.That(msg.SentTo, Contains.Item(randomUser.PhoneNumber));
-			Assert.That(msg.Author, Is.EqualTo(friend));
-		}
-
-		[Test]
-		public void TestCannotWritePrivateMessageToNoFriends()
-		{
-			//Arrange
-			var randomUser = TemporaryUser;
-			var randomUser2 = TemporaryUser;
-			const string message = "Hallo Welt";
-
-			//Act & Assert
-			Assert.Throws<FaultException<NoPermissionException>>(
-				() => UnitUnderTest.WritePrivateChatMessage(randomUser.Id, randomUser2.PhoneNumber, message));
+			Assert.That(msg.ArrivedAt, Contains.Item(friend.PhoneNumber));
+			Assert.That(msg.ReadBy, Contains.Item(friend.PhoneNumber));
 		}
 
 		[Test]
@@ -724,28 +682,52 @@ namespace ZenChatServiceTest
 		}
 
 		[Test]
-		public void TestReadPrivateMessage()
+		public void TestRemoveFriendsRemovesFriend()
 		{
 			//Arrange
-			var user = TemporaryUser;
-			var friend = TemporaryUser;
-			const string message = "Hallo Welt";
+			var randomUser = TemporaryUser;
+			var friend1 = TemporaryUser;
+			var friend2 = TemporaryUser;
+			var friend3 = TemporaryUser;
 
-			UnitUnderTest.AddFriend(user.Id, friend.PhoneNumber);
-			var conversation = UnitUnderTest.WritePrivateChatMessage(user.Id, friend.PhoneNumber, message);
+			UnitUnderTest.AddFriend(randomUser.Id, friend1.PhoneNumber);
+			UnitUnderTest.AddFriend(randomUser.Id, friend2.PhoneNumber);
+			UnitUnderTest.AddFriend(randomUser.Id, friend3.PhoneNumber);
 
 			//Act
-			UnitUnderTest.ReadChatMessage(friend.Id, conversation.Messages.First().Id);
-			conversation = UnitUnderTest.GetPrivateConversation(user.Id, friend.PhoneNumber);
+			UnitUnderTest.RemoveFriend(randomUser.Id, friend2.PhoneNumber);
 
 			//Assert
-			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
-			var msg = conversation.Messages.First();
-			Assert.That(msg.Message, Is.EqualTo(message));
-			Assert.That(msg.Author, Is.EqualTo(user));
-			Assert.That(msg.SentTo, Contains.Item(friend.PhoneNumber));
-			Assert.That(msg.ArrivedAt, Contains.Item(friend.PhoneNumber));
-			Assert.That(msg.ReadBy, Contains.Item(friend.PhoneNumber));
+			Assert.That(randomUser.Friends, Is.Not.Empty);
+			Assert.That(randomUser.Friends, Contains.Item(friend1));
+			Assert.That(randomUser.Friends, !Contains.Item(friend2));
+			Assert.That(randomUser.Friends, Contains.Item(friend3));
+		}
+
+		[Test]
+		public void TestRemoveFromChatRoomDisablesMember()
+		{
+			//Arrange
+			const string topic = "ExampleTopic";
+			var user = TemporaryUser;
+			var user2 = TemporaryUser;
+			var createdChat = UnitUnderTest.CreateChatRoom(user.Id, topic);
+			UnitUnderTest.InviteToChatRoom(user.Id, user2.PhoneNumber, createdChat.Id);
+
+			//Act
+			UnitUnderTest.RemoveFromChatRoom(user.Id, user2.PhoneNumber, createdChat.Id);
+			createdChat = UnitUnderTest.GetChatRoom(createdChat.Id, user.Id);
+
+			//Assert
+			Assert.That(createdChat.Admin, Is.EqualTo(user));
+			Assert.That(createdChat.CanWriteMessages);
+			Assert.That(createdChat.Members, Contains.Item(user));
+			Assert.That(createdChat.Members, !Contains.Item(user2));
+			Assert.That(createdChat.Topic, Is.EqualTo(topic));
+			Assert.That(createdChat.Messages, Is.Empty);
+
+			//Cleanup
+			DeleteChat(createdChat.Id);
 		}
 
 		[Test]
@@ -774,6 +756,53 @@ namespace ZenChatServiceTest
 			Assert.That(msg.ReadBy, Contains.Item(user.PhoneNumber));
 
 			Assert.That(conv2.Messages.Count(), Is.EqualTo(0));
+		}
+
+		[Test]
+		public void TestWriteGroupMessageAddsMessage()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			const string message = "Hallo Welt";
+			const string topic = "Random Topic";
+
+			var chatroom = UnitUnderTest.CreateChatRoom(randomUser.Id, topic);
+
+			//Act
+			UnitUnderTest.WriteGroupChatMessage(randomUser.Id, chatroom.Id, message);
+
+			//Assert
+			Assert.That(chatroom.Messages.Count(), Is.EqualTo(1));
+			var msg = chatroom.Messages.First();
+			Assert.That(msg.Message, Is.EqualTo(message));
+			Assert.That(msg.SentTo, Contains.Item(randomUser.PhoneNumber));
+			Assert.That(msg.ArrivedAt, Contains.Item(randomUser.PhoneNumber));
+			Assert.That(msg.ReadBy, Contains.Item(randomUser.PhoneNumber));
+			Assert.That(msg.Author, Is.EqualTo(randomUser));
+
+			//Cleanup
+			DeleteChat(chatroom.Id);
+		}
+
+		[Test]
+		public void TestWritePrivateMessageAddsMessage()
+		{
+			//Arrange
+			var randomUser = TemporaryUser;
+			var friend = TemporaryUser;
+			const string message = "Hallo Welt";
+
+			UnitUnderTest.AddFriend(randomUser.Id, friend.PhoneNumber);
+
+			//Act
+			var conversation = UnitUnderTest.WritePrivateChatMessage(randomUser.Id, friend.PhoneNumber, message);
+
+			//Assert
+			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
+			var msg = conversation.Messages.First();
+			Assert.That(msg.Message, Is.EqualTo(message));
+			Assert.That(msg.SentTo, Contains.Item(friend.PhoneNumber));
+			Assert.That(msg.Author, Is.EqualTo(randomUser));
 		}
 	}
 }

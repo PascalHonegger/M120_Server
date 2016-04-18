@@ -226,7 +226,10 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("DELETE FROM [friendship] WHERE (fk_user1 = @id AND fk_user2 = @id2) OR (fk_user1 = @id2 AND fk_user2 = @id)", connection);
+				var command =
+					new SqlCommand(
+						"DELETE FROM [friendship] WHERE (fk_user1 = @id AND fk_user2 = @id2) OR (fk_user1 = @id2 AND fk_user2 = @id)",
+						connection);
 
 				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@id2", SqlDbType.Int));
@@ -388,7 +391,8 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("UPDATE [chatroom_user] SET isMember=0 WHERE fk_user = @user AND fk_chatroom = @chat", connection);
+				var command = new SqlCommand("UPDATE [chatroom_user] SET isMember=0 WHERE fk_user = @user AND fk_chatroom = @chat",
+					connection);
 
 				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@chat", SqlDbType.Int));
@@ -421,7 +425,9 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("INSERT INTO [message] (author, message) OUTPUT INSERTED.id_message VALUES(@user, @message)", connection);
+				var command =
+					new SqlCommand("INSERT INTO [message] (author, message) OUTPUT INSERTED.id_message VALUES(@user, @message)",
+						connection);
 
 				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@message", SqlDbType.VarChar));
@@ -431,7 +437,7 @@ namespace ZenChatService
 
 				command.ExecuteNonQuery();
 
-				var messageId = (int)command.ExecuteScalar();
+				var messageId = (int) command.ExecuteScalar();
 
 				command.Parameters.Add(new SqlParameter("@idMessage", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@idChatroom", SqlDbType.Int));
@@ -458,7 +464,7 @@ namespace ZenChatService
 				else
 				{
 					command.CommandText =
-							"INSERT INTO [message_user] (fk_message, fk_chatroom) VALUES (@idMessage, @idChatroom)";
+						"INSERT INTO [message_user] (fk_message, fk_chatroom) VALUES (@idMessage, @idChatroom)";
 
 					command.ExecuteNonQuery();
 				}
@@ -508,7 +514,9 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("INSERT INTO [message] (author, message) OUTPUT INSERTED.id_message VALUES(@user, @message)", connection);
+				var command =
+					new SqlCommand("INSERT INTO [message] (author, message) OUTPUT INSERTED.id_message VALUES(@user, @message)",
+						connection);
 
 				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@message", SqlDbType.VarChar));
@@ -518,7 +526,7 @@ namespace ZenChatService
 
 				command.ExecuteNonQuery();
 
-				var messageId = (int)command.ExecuteScalar();
+				var messageId = (int) command.ExecuteScalar();
 
 				command.CommandText = "INSERT INTO [message_user] (fk_message, fk_user) VALUES (@idMessage, @other)";
 
@@ -550,7 +558,9 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("UPDATE [message_user] SET wasreceived=1, wasRead=1 WHERE fk_user = @user AND fk_message = @message", connection);
+				var command =
+					new SqlCommand(
+						"UPDATE [message_user] SET wasreceived=1, wasRead=1 WHERE fk_user = @user AND fk_message = @message", connection);
 
 				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@message", SqlDbType.Int));
@@ -574,7 +584,9 @@ namespace ZenChatService
 			{
 				connection.Open();
 
-				var command = new SqlCommand("UPDATE [message_user] SET wasReceived=1 WHERE fk_user = @user AND fk_message = @message", connection);
+				var command =
+					new SqlCommand("UPDATE [message_user] SET wasReceived=1 WHERE fk_user = @user AND fk_message = @message",
+						connection);
 
 				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@message", SqlDbType.Int));

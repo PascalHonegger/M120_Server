@@ -76,7 +76,8 @@ namespace ZenChatService.ServiceClasses
 					//Load Messages sent to you
 					var command =
 						new SqlCommand(
-							"SELECT fk_message FROM [message_user] where fk_chatroom = @chatroomId AND fk_user = @userId", connection);
+							"SELECT fk_message FROM [message_user] INNER JOIN [message] ON fk_message = id_message WHERE fk_chatroom = @chatroomId AND (fk_user = @userId OR author = @userId)",
+							connection);
 
 					command.Parameters.Add(new SqlParameter("@chatroomId", SqlDbType.Int));
 					command.Parameters.Add(new SqlParameter("@userId", SqlDbType.Int));
@@ -90,39 +91,6 @@ namespace ZenChatService.ServiceClasses
 					{
 						var idMessageUser = reader.GetInt32(0);
 						yield return new ChatMessage(idMessageUser);
-					}
-
-					reader.Close();
-
-					//Load own Messages
-					command.CommandText = "SELECT id_message FROM [message] WHERE author = @userId";
-
-					reader = command.ExecuteReader();
-
-					var sentMessages = new List<int>();
-					while (reader.Read())
-					{
-						sentMessages.Add(reader.GetInt32(0));
-					}
-
-					reader.Close();
-
-					command.Parameters.Add(new SqlParameter("@messageId", SqlDbType.Int));
-
-					foreach (var idMessage in sentMessages)
-					{
-						command.CommandText = "SELECT DISTINCT fk_message FROM [message_user] WHERE fk_chatroom = @chatroomId AND fk_message = @messageId";
-
-						command.Parameters["@messageId"].Value = idMessage;
-
-						reader = command.ExecuteReader();
-
-						while (reader.Read())
-						{
-							yield return new ChatMessage(reader.GetInt32(0));
-						}
-
-						reader.Close();
 					}
 				}
 			}

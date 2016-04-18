@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿// Copyright (c) 2016 Pascal Honegger
+// All rights reserved.
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 

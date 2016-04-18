@@ -34,6 +34,42 @@ namespace ZenChatService.ServiceClasses
 		public int Id { get; set; }
 
 		/// <summary>
+		///     Der Author dieser Nachricht.
+		/// </summary>
+		[DataMember]
+		public User Author { get; set; }
+
+		/// <summary>
+		///     Die eigentliche Nachricht.
+		/// </summary>
+		[DataMember]
+		public string Message { get; set; }
+
+		/// <summary>
+		///     Das Datum, an welchem diese Nachricht gesendet / erstellt wurde.
+		/// </summary>
+		[DataMember]
+		public DateTime Created { get; set; }
+
+		/// <summary>
+		///     Die Liste der User, bei welcher diese Nachricht angekommen ist.
+		/// </summary>
+		[DataMember]
+		public IEnumerable<string> ArrivedAt { get; set; }
+
+		/// <summary>
+		///     Die Liste der User, welche diese Nachricht gelesen haben.
+		/// </summary>
+		[DataMember]
+		public IEnumerable<string> ReadBy { get; set; }
+
+		/// <summary>
+		///     Die Liste der User, an welche diese Nachricht gesendet wurde.
+		/// </summary>
+		[DataMember]
+		public IEnumerable<string> SentTo { get; set; }
+
+		/// <summary>
 		///     Lädt alle Daten des Users nach.
 		/// </summary>
 		/// <exception cref="UserNotFoundException">Es wurde kein User mit der angegebenen ID gefunden.</exception>
@@ -67,9 +103,9 @@ namespace ZenChatService.ServiceClasses
 
 				reader = command.ExecuteReader();
 
-				var sentTo = new List<string> { Author.PhoneNumber };
-				var readBy = new List<string> { Author.PhoneNumber };
-				var receivedBy = new List<string> { Author.PhoneNumber };
+				var sentTo = new List<string> {Author.PhoneNumber};
+				var readBy = new List<string> {Author.PhoneNumber};
+				var receivedBy = new List<string> {Author.PhoneNumber};
 
 				while (reader.Read())
 				{
@@ -93,42 +129,6 @@ namespace ZenChatService.ServiceClasses
 			}
 		}
 
-		/// <summary>
-		///     Der Author dieser Nachricht.
-		/// </summary>
-		[DataMember]
-		public User Author { get; set; }
-
-		/// <summary>
-		///     Die eigentliche Nachricht.
-		/// </summary>
-		[DataMember]
-		public string Message { get; set; }
-
-		/// <summary>
-		///     Das Datum, an welchem diese Nachricht gesendet / erstellt wurde.
-		/// </summary>
-		[DataMember]
-		public DateTime Created { get; set; }
-
-		/// <summary>
-		///     Die Liste der User, bei welcher diese Nachricht angekommen ist.
-		/// </summary>
-		[DataMember]
-		public IEnumerable<string> ArrivedAt { get;  set; }
-
-		/// <summary>
-		///     Die Liste der User, welche diese Nachricht gelesen haben.
-		/// </summary>
-		[DataMember]
-		public IEnumerable<string> ReadBy { get; set; }
-
-		/// <summary>
-		///     Die Liste der User, an welche diese Nachricht gesendet wurde.
-		/// </summary>
-		[DataMember]
-		public IEnumerable<string> SentTo { get; set; }
-
 		private bool Equals(User other)
 		{
 			return Equals(Id, other.Id);
@@ -142,7 +142,7 @@ namespace ZenChatService.ServiceClasses
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			return obj.GetType() == GetType() && Equals((User)obj);
+			return obj.GetType() == GetType() && Equals((User) obj);
 		}
 
 		/// <summary>Fungiert als die Standardhashfunktion. </summary>
