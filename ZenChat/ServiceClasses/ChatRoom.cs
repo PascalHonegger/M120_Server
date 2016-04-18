@@ -148,7 +148,7 @@ namespace ZenChatService.ServiceClasses
 
 				//Load General Settings
 
-				var command = new SqlCommand("SELECT admin, created, topic FROM [chatroom] where id_chatroom = @id", connection);
+				var command = new SqlCommand("SELECT admin, created, topic FROM [chatroom] WHERE id_chatroom = @id", connection);
 
 				command.Parameters.Add(new SqlParameter("@id", SqlDbType.Int));
 

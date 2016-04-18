@@ -658,7 +658,7 @@ namespace ZenChatServiceTest
 			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
 			var msg = conversation.Messages.First();
 			Assert.That(msg.Message, Is.EqualTo(message));
-			Assert.That(msg.SentTo, Contains.Item(friend));
+			Assert.That(msg.SentTo, Contains.Item(friend.PhoneNumber));
 			Assert.That(msg.Author, Is.EqualTo(randomUser));
 		}
 
@@ -681,7 +681,7 @@ namespace ZenChatServiceTest
 			Assert.That(conversation.Messages.Count(), Is.EqualTo(1));
 			var msg = conversation.Messages.First();
 			Assert.That(msg.Message, Is.EqualTo(message));
-			Assert.That(msg.SentTo, Contains.Item(randomUser));
+			Assert.That(msg.SentTo, Contains.Item(randomUser.PhoneNumber));
 			Assert.That(msg.Author, Is.EqualTo(friend));
 		}
 
@@ -718,9 +718,9 @@ namespace ZenChatServiceTest
 			var msg = conversation.Messages.First();
 			Assert.That(msg.Message, Is.EqualTo(message));
 			Assert.That(msg.Author, Is.EqualTo(user));
-			Assert.That(msg.SentTo, Contains.Item(friend).And.Contains(user));
-			Assert.That(msg.ArrivedAt, Contains.Item(friend).And.Contains(user));
-			Assert.That(msg.ReadBy, Contains.Item(user));
+			Assert.That(msg.SentTo, Contains.Item(friend.PhoneNumber).And.Contains(user.PhoneNumber));
+			Assert.That(msg.ArrivedAt, Contains.Item(friend.PhoneNumber).And.Contains(user.PhoneNumber));
+			Assert.That(msg.ReadBy, Contains.Item(user.PhoneNumber));
 		}
 
 		[Test]
@@ -743,9 +743,9 @@ namespace ZenChatServiceTest
 			var msg = conversation.Messages.First();
 			Assert.That(msg.Message, Is.EqualTo(message));
 			Assert.That(msg.Author, Is.EqualTo(user));
-			Assert.That(msg.SentTo, Contains.Item(friend));
-			Assert.That(msg.ArrivedAt, Contains.Item(friend));
-			Assert.That(msg.ReadBy, Contains.Item(friend));
+			Assert.That(msg.SentTo, Contains.Item(friend.PhoneNumber));
+			Assert.That(msg.ArrivedAt, Contains.Item(friend.PhoneNumber));
+			Assert.That(msg.ReadBy, Contains.Item(friend.PhoneNumber));
 		}
 
 		[Test]
@@ -769,9 +769,9 @@ namespace ZenChatServiceTest
 			var msg = conv1.Messages.First();
 			Assert.That(msg.Message, Is.EqualTo(message));
 			Assert.That(msg.Author, Is.EqualTo(user));
-			Assert.That(msg.SentTo, Contains.Item(friend).And.Contains(user));
-			Assert.That(msg.ArrivedAt, Contains.Item(user));
-			Assert.That(msg.ReadBy, Contains.Item(user));
+			Assert.That(msg.SentTo, Contains.Item(friend.PhoneNumber).And.Contains(user.PhoneNumber));
+			Assert.That(msg.ArrivedAt, Contains.Item(user.PhoneNumber));
+			Assert.That(msg.ReadBy, Contains.Item(user.PhoneNumber));
 
 			Assert.That(conv2.Messages.Count(), Is.EqualTo(0));
 		}

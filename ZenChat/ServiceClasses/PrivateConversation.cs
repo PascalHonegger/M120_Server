@@ -43,12 +43,12 @@ namespace ZenChatService.ServiceClasses
 				connection.Open();
 
 				//Load received Messages
-				var command = new SqlCommand("SELECT fk_message FROM [message_user] WHERE fk_user = @user1", connection);
+				var command = new SqlCommand("SELECT id_message FROM [message] INNER JOIN [message_user] ON id_message = fk_message WHERE (fk_user = @user AND author = @user2) OR (fk_user = @user2 AND author = @user)", connection);
 
-				command.Parameters.Add(new SqlParameter("@user1", SqlDbType.Int));
+				command.Parameters.Add(new SqlParameter("@user", SqlDbType.Int));
 				command.Parameters.Add(new SqlParameter("@user2", SqlDbType.Int));
 
-				command.Parameters["@user1"].Value = user1.Id;
+				command.Parameters["@user"].Value = user1.Id;
 				command.Parameters["@user2"].Value = user2.Id;
 
 				var reader = command.ExecuteReader();
@@ -56,27 +56,7 @@ namespace ZenChatService.ServiceClasses
 				while (reader.Read())
 				{
 					var idMessage = reader.GetInt32(0);
-					var message = new ChatMessage(idMessage);
-					if (Equals(message.Author, user2))
-					{
-						yield return message;
-					}
-				}
-				reader.Close();
-
-				//Load Sent Messages
-				command.CommandText = "SELECT fk_message FROM [message_user] WHERE fk_user = @user2";
-
-				reader = command.ExecuteReader();
-
-				while (reader.Read())
-				{
-					var idMessage = reader.GetInt32(0);
-					var message = new ChatMessage(idMessage);
-					if (Equals(message.Author, user1))
-					{
-						yield return message;
-					}
+					yield return new ChatMessage(idMessage);
 				}
 			}
 		}

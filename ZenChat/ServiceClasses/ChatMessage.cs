@@ -67,15 +67,15 @@ namespace ZenChatService.ServiceClasses
 
 				reader = command.ExecuteReader();
 
-				var sentTo = new List<User> { Author };
-				var readBy = new List<User> { Author };
-				var receivedBy = new List<User> { Author };
+				var sentTo = new List<string> { Author.PhoneNumber };
+				var readBy = new List<string> { Author.PhoneNumber };
+				var receivedBy = new List<string> { Author.PhoneNumber };
 
 				while (reader.Read())
 				{
 					if (!reader.IsDBNull(0))
 					{
-						var target = new User(reader.GetInt32(0));
+						var target = new User(reader.GetInt32(0)).PhoneNumber;
 						sentTo.Add(target);
 						if (reader.GetBoolean(1))
 						{
@@ -115,19 +115,19 @@ namespace ZenChatService.ServiceClasses
 		///     Die Liste der User, bei welcher diese Nachricht angekommen ist.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> ArrivedAt { get;  set; }
+		public IEnumerable<string> ArrivedAt { get;  set; }
 
 		/// <summary>
 		///     Die Liste der User, welche diese Nachricht gelesen haben.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> ReadBy { get; set; }
+		public IEnumerable<string> ReadBy { get; set; }
 
 		/// <summary>
 		///     Die Liste der User, an welche diese Nachricht gesendet wurde.
 		/// </summary>
 		[DataMember]
-		public IEnumerable<User> SentTo { get; set; }
+		public IEnumerable<string> SentTo { get; set; }
 
 		private bool Equals(User other)
 		{
