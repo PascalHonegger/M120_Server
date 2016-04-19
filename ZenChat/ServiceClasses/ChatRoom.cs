@@ -76,7 +76,7 @@ namespace ZenChatService.ServiceClasses
 					//Load Messages sent to you
 					var command =
 						new SqlCommand(
-							"SELECT fk_message FROM [message_user] INNER JOIN [message] ON fk_message = id_message WHERE fk_chatroom = @chatroomId AND (fk_user = @userId OR author = @userId)",
+							"SELECT DISTINCT fk_message FROM [message_user] INNER JOIN [message] ON fk_message = id_message WHERE fk_chatroom = @chatroomId AND (fk_user = @userId OR author = @userId)",
 							connection);
 
 					command.Parameters.Add(new SqlParameter("@chatroomId", SqlDbType.Int));
