@@ -537,9 +537,9 @@ namespace ZenChatService
 				command.Parameters["@other"].Value = other.Id;
 
 				command.ExecuteNonQuery();
-
-				return GetPrivateConversation(userId, otherPhone);
 			}
+
+			return GetPrivateConversation(userId, otherPhone);
 		}
 
 		#endregion
